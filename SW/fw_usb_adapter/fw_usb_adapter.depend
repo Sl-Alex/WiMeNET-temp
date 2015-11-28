@@ -1,0 +1,282 @@
+# depslib dependency file v1.0
+1447617468 source:d:\work\smarthome\software\fw_global\delay_hw.c
+	"delay_hw.h"
+	"stm32f10x_tim.h"
+
+1418418206 d:\work\smarthome\software\fw_global\delay_hw.h
+	<stdint.h>
+	<stm32f10x.h>
+	<misc.h>
+	"stm32f10x_rcc.h"
+	"stm32f10x_tim.h"
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\cmsis_boot\stm32f10x.h
+	"core_cm3.h"
+	"system_stm32f10x.h"
+	<stdint.h>
+	"stm32f10x_conf.h"
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\cmsis\core_cm3.h
+	<stdint.h>
+	<core_cmInstr.h>
+	<core_cmFunc.h>
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\cmsis\core_cminstr.h
+	<cmsis_iar.h>
+	<cmsis_ccs.h>
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\cmsis\core_cmfunc.h
+	<cmsis_iar.h>
+	<cmsis_ccs.h>
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\cmsis_boot\system_stm32f10x.h
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\cmsis_boot\stm32f10x_conf.h
+	"stm32f10x_exti.h"
+	"stm32f10x_gpio.h"
+	"stm32f10x_pwr.h"
+	"stm32f10x_rcc.h"
+	"stm32f10x_tim.h"
+	"stm32f10x_usart.h"
+	"misc.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\stm32f10x_exti.h
+	"stm32f10x.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\stm32f10x_gpio.h
+	"stm32f10x.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\stm32f10x_pwr.h
+	"stm32f10x.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\stm32f10x_rcc.h
+	"stm32f10x.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\stm32f10x_tim.h
+	"stm32f10x.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\stm32f10x_usart.h
+	"stm32f10x.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\misc.h
+	"stm32f10x.h"
+
+1439641732 source:d:\work\smarthome\software\fw_usb_adapter\cmsis_boot\startup\startup_stm32f10x_md.s
+
+1447884802 source:d:\work\smarthome\software\fw_usb_adapter\cmsis_boot\system_stm32f10x.c
+	"stm32f10x.h"
+
+1448389703 source:d:\work\smarthome\software\fw_usb_adapter\src\hw_config.c
+	"hw_config.h"
+	"usb_lib.h"
+	"usb_desc.h"
+	"usb_pwr.h"
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\inc\hw_config.h
+	"platform_config.h"
+	"usb_type.h"
+
+1447885326 d:\work\smarthome\software\fw_usb_adapter\inc\platform_config.h
+	"stm32f10x.h"
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_type.h
+	"usb_conf.h"
+
+1440781594 d:\work\smarthome\software\fw_usb_adapter\inc\usb_conf.h
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_lib.h
+	"hw_config.h"
+	"usb_type.h"
+	"usb_regs.h"
+	"usb_def.h"
+	"usb_core.h"
+	"usb_init.h"
+	"usb_sil.h"
+	"usb_mem.h"
+	"usb_int.h"
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_regs.h
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_def.h
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_core.h
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_init.h
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_sil.h
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_mem.h
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\usb-fs\inc\usb_int.h
+
+1440653626 d:\work\smarthome\software\fw_usb_adapter\inc\usb_desc.h
+	"hw_config.h"
+
+1439614764 d:\work\smarthome\software\fw_usb_adapter\inc\usb_pwr.h
+	"usb_core.h"
+	"usb_type.h"
+
+1448565432 source:d:\work\smarthome\software\fw_usb_adapter\src\main.c
+	<stdio.h>
+	"hw_config.h"
+	"usb_lib.h"
+	"usb_pwr.h"
+	"pcd8544.h"
+	"delay_hw.h"
+	"wmn_driver.h"
+	"wmn_queue.h"
+	"wmn_packet.h"
+
+1447603603 d:\work\smarthome\software\fw_usb_adapter\inc\pcd8544.h
+
+1448056232 d:\work\smarthome\software\wmn\wmn_driver.h
+	<stdint.h>
+	"wmn_packet.h"
+
+1419578426 d:\work\smarthome\software\wmn\wmn_packet.h
+	<stdint.h>
+	"wmn_config.h"
+
+1448055438 d:\work\smarthome\software\wmn\wmn_config.h
+
+1447884146 d:\work\smarthome\software\wmn\wmn_queue.h
+	<stdint.h>
+	"wmn_config.h"
+	"wmn_packet.h"
+
+1448228770 source:d:\work\smarthome\software\fw_usb_adapter\src\pcd8544.c
+	"stm32f10x.h"
+	"stm32f10x_gpio.h"
+	"stm32f10x_rcc.h"
+	"stm32f10x_spi.h"
+	"stm32f10x_dma.h"
+	"misc.h"
+	"pcd8544.h"
+	"font6x8.h"
+	"font4x6.h"
+	"delay_hw.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\stm32f10x_spi.h
+	"stm32f10x.h"
+
+1439641734 d:\work\smarthome\software\fw_usb_adapter\stm_lib\inc\stm32f10x_dma.h
+	"stm32f10x.h"
+
+1361052720 d:\work\smarthome\software\fw_usb_adapter\inc\font6x8.h
+
+1419800380 d:\work\smarthome\software\fw_usb_adapter\inc\font4x6.h
+
+1439641732 source:d:\work\smarthome\software\fw_usb_adapter\src\stm32_it.c
+	"stm32_it.h"
+	"usb_istr.h"
+	"usb_lib.h"
+	"usb_pwr.h"
+	"platform_config.h"
+
+1439641732 d:\work\smarthome\software\fw_usb_adapter\inc\stm32_it.h
+	"platform_config.h"
+
+1439614764 d:\work\smarthome\software\fw_usb_adapter\inc\usb_istr.h
+	"usb_conf.h"
+
+1440653696 source:d:\work\smarthome\software\fw_usb_adapter\src\usb_desc.c
+	"usb_desc.h"
+
+1448395420 source:d:\work\smarthome\software\fw_usb_adapter\src\usb_endp.c
+	"usb_lib.h"
+	"usb_bot.h"
+	"usb_istr.h"
+	"wmn_queue.h"
+	"wmn_packet.h"
+
+1439614764 d:\work\smarthome\software\fw_usb_adapter\inc\usb_bot.h
+
+1439614764 source:d:\work\smarthome\software\fw_usb_adapter\src\usb_istr.c
+	"hw_config.h"
+	"usb_type.h"
+	"usb_regs.h"
+	"usb_pwr.h"
+	"usb_istr.h"
+	"usb_init.h"
+	"usb_int.h"
+	"usb_lib.h"
+
+1440782426 source:d:\work\smarthome\software\fw_usb_adapter\src\usb_prop.c
+	"hw_config.h"
+	"usb_lib.h"
+	"usb_conf.h"
+	"usb_desc.h"
+	"usb_pwr.h"
+	"usb_bot.h"
+	"usb_prop.h"
+
+1439614764 d:\work\smarthome\software\fw_usb_adapter\inc\usb_prop.h
+
+1448312449 source:d:\work\smarthome\software\fw_usb_adapter\src\usb_pwr.c
+	"usb_lib.h"
+	"usb_conf.h"
+	"usb_pwr.h"
+	"hw_config.h"
+
+1439641734 source:d:\work\smarthome\software\fw_usb_adapter\stm_lib\src\misc.c
+	"misc.h"
+
+1439641734 source:d:\work\smarthome\software\fw_usb_adapter\stm_lib\src\stm32f10x_exti.c
+	"stm32f10x_exti.h"
+
+1439641734 source:d:\work\smarthome\software\fw_usb_adapter\stm_lib\src\stm32f10x_gpio.c
+	"stm32f10x_gpio.h"
+	"stm32f10x_rcc.h"
+
+1439641734 source:d:\work\smarthome\software\fw_usb_adapter\stm_lib\src\stm32f10x_pwr.c
+	"stm32f10x_pwr.h"
+	"stm32f10x_rcc.h"
+
+1439641734 source:d:\work\smarthome\software\fw_usb_adapter\stm_lib\src\stm32f10x_rcc.c
+	"stm32f10x_rcc.h"
+
+1439641734 source:d:\work\smarthome\software\fw_usb_adapter\stm_lib\src\stm32f10x_spi.c
+	"stm32f10x_spi.h"
+	"stm32f10x_rcc.h"
+
+1439641734 source:d:\work\smarthome\software\fw_usb_adapter\stm_lib\src\stm32f10x_tim.c
+	"stm32f10x_tim.h"
+	"stm32f10x_rcc.h"
+
+1439641734 source:d:\work\smarthome\software\fw_usb_adapter\stm_lib\src\stm32f10x_usart.c
+	"stm32f10x_usart.h"
+	"stm32f10x_rcc.h"
+
+1439641732 source:d:\work\smarthome\software\fw_usb_adapter\usb-fs\src\usb_core.c
+	"usb_lib.h"
+
+1439641732 source:d:\work\smarthome\software\fw_usb_adapter\usb-fs\src\usb_init.c
+	"usb_lib.h"
+
+1439641732 source:d:\work\smarthome\software\fw_usb_adapter\usb-fs\src\usb_int.c
+	"usb_lib.h"
+
+1439641732 source:d:\work\smarthome\software\fw_usb_adapter\usb-fs\src\usb_mem.c
+	"usb_lib.h"
+
+1439641732 source:d:\work\smarthome\software\fw_usb_adapter\usb-fs\src\usb_regs.c
+	"usb_lib.h"
+
+1440781616 source:d:\work\smarthome\software\fw_usb_adapter\usb-fs\src\usb_sil.c
+	"usb_lib.h"
+
+1448389759 source:d:\work\smarthome\software\wmn\driver\stm32_cc1101\wmn_driver.c
+	"wmn_driver.h"
+	"wmn_config.h"
+	"stm32f10x_spi.h"
+	"cc1101_regs.h"
+	"delay_hw.h"
+	"cc1101_init_arr.c"
+
+1419428402 d:\work\smarthome\software\wmn\driver\stm32_cc1101\cc1101_regs.h
+
+1448565058 d:\work\smarthome\software\wmn\driver\stm32_cc1101\cc1101_init_arr.c
+
+1448565500 source:d:\work\smarthome\software\wmn\wmn_queue.c
+	"wmn_queue.h"
+

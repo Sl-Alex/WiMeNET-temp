@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MainForm.ui.qml</file>
+        <file>WiNET_device_button.qml</file>
+        <file>pics/rssi_0.svg</file>
+        <file>pics/rssi_25.svg</file>
+        <file>pics/rssi_50.svg</file>
+        <file>pics/rssi_75.svg</file>
+        <file>pics/rssi_100.svg</file>
+        <file>pics/binding_no.svg</file>
+        <file>pics/binding_ok.svg</file>
+    </qresource>
+</RCC>
