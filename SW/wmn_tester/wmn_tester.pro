@@ -5,7 +5,8 @@ QT += qml quick widgets
 SOURCES += main.cpp \
     transceiver.cpp \
     ../wmn/driver/usb_crossplaform/WmnDriver.cpp \
-    testclass.cpp
+    testclass.cpp \
+    ../wmn/WmnPacketDispatcher.cpp
 
 lupdate_only{
 SOURCES += *.qml \
@@ -33,6 +34,8 @@ include(deployment.pri)
 HEADERS += \
     transceiver.h \
     ../wmn/driver/WmnDriver.h \
-    testclass.h
+    testclass.h \
+    ../wmn/WmnPacketDispatcher.h \
+    ../wmn/WmnPacket.h
 
 FORMS +=

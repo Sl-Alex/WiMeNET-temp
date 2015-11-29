@@ -24,7 +24,7 @@ static uint8_t lqi_raw;
 static wmn_driver_rx_cb_t rx_callback;
 static wmn_driver_tx_cb_t tx_callback;
 
-static wmn_packet_t rx_packet;
+static WmnPacket rx_packet;
 
 static uint8_t  chip_status = 0;
 // Rf settings for CC1101
@@ -144,6 +144,7 @@ static uint8_t strobe(uint8_t strobe);
 static void read(uint8_t address, uint8_t * data, uint8_t length);
 static void write(uint8_t address, uint8_t * data, uint8_t length);
 static void driver_irq_setup(void);
+void wmn_driver_irq_enable(void);
 
 /// @brief Initialize CC1101
 void wmn_driver_init(void)
@@ -315,7 +316,7 @@ static void powerup_reset(void)
     strobe(CC1101_STROBE_SRES);
 }
 
-void wmn_driver_transmit(wmn_packet_t * packet)
+void wmn_driver_transmit(WmnPacket * packet)
 {
     write(CC1101_REG_RXTX_FIFO, (uint8_t *)packet, WMN_CONFIG_PACKET_LENGTH);
     strobe(CC1101_STROBE_STX);
@@ -323,7 +324,7 @@ void wmn_driver_transmit(wmn_packet_t * packet)
     // Wait for TX finish (check GDO0)
 }
 
-uint8_t wmn_driver_receive(wmn_packet_t * packet, uint16_t timeout)
+uint8_t wmn_driver_receive(WmnPacket * packet, uint16_t timeout)
 {
     uint8_t rssi_dec;
     int16_t rssi_dBm;
@@ -424,7 +425,7 @@ void wmn_driver_irq_disable()
     NVIC_Init(&NVIC_InitStructure);
 }
 
-void wmn_driver_irq_enable()
+void wmn_driver_irq_enable(void)
 {
     NVIC_InitTypeDef   NVIC_InitStructure;
 

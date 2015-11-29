@@ -1,12 +1,12 @@
 /**
-* @file wmn_packet.h
+* @file WmnPacket.h
 * @brief WiMeNet packet definition
 *
 * @author Oleksii Slabchenko, alexslabchenko@gmail.com
 */
 
-#ifndef WMN_PACKET_H
-#define WMN_PACKET_H
+#ifndef WMNPACKET_H
+#define WMNPACKET_H
 
 #include <stdint.h>
 #include "wmn_config.h"
@@ -49,6 +49,6 @@ typedef union __attribute__((packed))
         uint8_t rssi;
 	} packet;
 
-} wmn_packet_t;
+} WmnPacket;
 
-#endif // WMN_PACKET_H
+#endif // WMNPACKET_H

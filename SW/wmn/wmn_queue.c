@@ -26,7 +26,7 @@ void wmn_queue_init(wmn_queue_t * queue)
 /// @param in_irq - should be non-zero if the function is called from the interrupt handler
 /// @returns 0 - read failure (nothing to read)
 /// @returns 1 - successful read
-uint8_t wmn_queue_write(wmn_queue_t * queue, wmn_packet_t * packet, uint8_t in_irq)
+uint8_t wmn_queue_write(wmn_queue_t * queue, WmnPacket * packet, uint8_t in_irq)
 {
     uint8_t ret = 0;
     if (in_irq == 0) asm("cpsid i");
@@ -53,7 +53,7 @@ uint8_t wmn_queue_write(wmn_queue_t * queue, wmn_packet_t * packet, uint8_t in_i
 /// @param in_irq - should be non-zero if the function is called from the interrupt handler
 /// @returns 0 - read failure (nothing to read)
 /// @returns 1 - successful read
-uint8_t wmn_queue_read(wmn_queue_t * queue, wmn_packet_t * packet, uint8_t in_irq)
+uint8_t wmn_queue_read(wmn_queue_t * queue, WmnPacket * packet, uint8_t in_irq)
 {
     uint8_t ret = 0;
     if (in_irq == 0) asm("cpsid i");

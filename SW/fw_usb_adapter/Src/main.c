@@ -18,12 +18,12 @@
 #include "delay_hw.h"
 #include "wmn_driver.h"
 #include "wmn_queue.h"
-#include "wmn_packet.h"
+#include "WmnPacket.h"
 
 /* Private variables ---------------------------------------------------------*/
 __IO uint8_t PrevXferComplete = 1;
 
-wmn_packet_t packet;
+WmnPacket packet;
 wmn_queue_t rx_queue;
 wmn_queue_t tx_queue;
 uint8_t rx_cnt = 0;
@@ -35,7 +35,7 @@ void Delay(volatile uint32_t nCount) {
 }
 
 // New packet has arrived, can be read via the function parameter
-void wireless_rx_cb(wmn_packet_t * rx_packet)
+void wireless_rx_cb(WmnPacket * rx_packet)
 {
     wmn_queue_write(&rx_queue, rx_packet, 1);
     rx_cnt++;

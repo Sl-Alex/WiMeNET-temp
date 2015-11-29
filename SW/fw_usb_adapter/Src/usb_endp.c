@@ -32,7 +32,7 @@
 #include "usb_istr.h"
 
 #include "wmn_queue.h"
-#include "wmn_packet.h"
+#include "WmnPacket.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -58,7 +58,7 @@ void EP1_IN_Callback(void)
     /* Copy mouse position info in ENDP1 Tx Packet Memory Area*/
 //    USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
     /* Enable endpoint for transmission */
-    if (wmn_queue_read(&rx_queue, (wmn_packet_t *)&Bulk_Data_Buff, 1))
+    if (wmn_queue_read(&rx_queue, (WmnPacket *)&Bulk_Data_Buff, 1))
     {
         USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
     }

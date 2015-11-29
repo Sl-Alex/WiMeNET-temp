@@ -61,8 +61,8 @@
 			<Add directory=".\Inc" />
 			<Add directory=".\cmsis" />
 			<Add directory=".\cmsis_boot" />
-			<Add directory=".\stm_lib\src" />
-			<Add directory=".\stm_lib\inc" />
+			<Add directory="..\fw_global\stm_lib\src" />
+			<Add directory="..\fw_global\stm_lib\inc" />
 			<Add directory=".\USB-FS\inc" />
 			<Add directory=".\USB-FS\src" />
 		</Compiler>
@@ -81,6 +81,30 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\fw_global\delay_hw.h" />
+		<Unit filename="..\fw_global\stm_lib\src\misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\fw_global\stm_lib\src\stm32f10x_exti.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\fw_global\stm_lib\src\stm32f10x_gpio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\fw_global\stm_lib\src\stm32f10x_pwr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\fw_global\stm_lib\src\stm32f10x_rcc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\fw_global\stm_lib\src\stm32f10x_spi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\fw_global\stm_lib\src\stm32f10x_tim.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\fw_global\stm_lib\src\stm32f10x_usart.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="cmsis\core_cm3.h" />
 		<Unit filename="cmsis\core_cmFunc.h" />
 		<Unit filename="cmsis\core_cmInstr.h" />
@@ -158,30 +182,6 @@
 		<Unit filename="stm_lib\inc\stm32f10x_tim.h" />
 		<Unit filename="stm_lib\inc\stm32f10x_usart.h" />
 		<Unit filename="stm_lib\inc\stm32f10x_wwdg.h" />
-		<Unit filename="stm_lib\src\misc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="stm_lib\src\stm32f10x_exti.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="stm_lib\src\stm32f10x_gpio.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="stm_lib\src\stm32f10x_pwr.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="stm_lib\src\stm32f10x_rcc.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="stm_lib\src\stm32f10x_spi.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="stm_lib\src\stm32f10x_tim.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="stm_lib\src\stm32f10x_usart.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="Svd\STM32F100xx.svd" />
 		<Unit filename="Svd\STM32F101xx.svd" />
 		<Unit filename="Svd\STM32F102xx.svd" />
