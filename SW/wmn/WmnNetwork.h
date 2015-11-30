@@ -1,12 +1,12 @@
-#ifndef WMNPACKETDISPATCHER_H
-#define WMNPACKETDISPATCHER_H
+#ifndef WMNNETWORK_H
+#define WMNNETWORK_H
 
 #include "WmnPacket.h"
 
-class WmnPacketDispatcher
+class WmnNetwork
 {
   public:
-    WmnPacketDispatcher(void);
+    WmnNetwork(void);
 
     static void onRxCallback(void * obj, WmnPacket * value);
   private:
@@ -14,4 +14,4 @@ class WmnPacketDispatcher
     void mRxCallback(WmnPacket * value);
 };
 
-#endif // WMNPACKETDISPATCHER_H
+#endif // WMNNETWORK_H
