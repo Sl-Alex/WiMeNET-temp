@@ -23,7 +23,7 @@ Of course, a lot of things should be done. Here they are:
 * Secure communication. AES-128 is planned, but any custom  Test implementation takes about 1.5ms for the 64-byte packet encryption. Decryption takes roughly the same time.
 * Mesh implementation.
 
-*Note: I'm not sure that mesh implementetion is necessary here. It seems that the network without mesh is more than enough for the smart home, because the communication on such a small distances is stable enough. Moreover, 868MHz frequency range is clear enough, unlike of 433MHz range*
+*Note: I'm not sure that mesh implementation is necessary here. It seems that the network without mesh is more than enough for the smart home, because the communication on such a small distances is stable enough. Moreover, 868MHz frequency range is clear enough, unlike of 433MHz range*
 
   [1]: http://www.ebay.com/itm/STM32F103C8T6-ARM-STM32-Minimum-System-Development-Board-Module-For-Arduino-NEW-/161469482910
   [2]: http://www.ebay.com/itm/1PCS-CC1101-wireless-module-Long-Distance-Transmission-Antenna-868MHZ-NEW-/262159509635
