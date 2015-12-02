@@ -6,7 +6,8 @@ SOURCES += main.cpp \
     transceiver.cpp \
     testclass.cpp \
     ../wmn/driver/usb_crossplaform/WmnDriver.cpp \
-    ../wmn/WmnNetwork.cpp
+    ../wmn/WmnNetwork.cpp \
+    ../wmn/WmnCipher.cpp
 
 lupdate_only{
 SOURCES += *.qml \
@@ -36,6 +37,7 @@ HEADERS += \
     testclass.h \
     ../wmn/driver/WmnDriver.h \
     ../wmn/WmnPacket.h \
-    ../wmn/WmnNetwork.h
+    ../wmn/WmnNetwork.h \
+    ../wmn/WmnCipher.h
 
 FORMS +=
