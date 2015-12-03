@@ -15,6 +15,11 @@ public:
 
 
 private:
+  typedef uint8_t state_t[4][4];
+
+  // state - array holding the intermediate results during decryption.
+  state_t* state;
+
   // The Key input to the AES Program
   uint8_t* mKey;
   static const uint8_t mSBox[256];
@@ -24,16 +29,22 @@ private:
   // The array that stores the round keys.
   uint8_t mRoundKey[176];
 
-  static uint8_t mgetSBoxValue(uint8_t num);
-  static uint8_t mgetSBoxInvert(uint8_t num);
+  static inline uint8_t mgetSBoxValue(uint8_t num);
+  static inline uint8_t mgetSBoxInvert(uint8_t num);
 
-  void SubBytes(void);
-  void InvSubBytes(void);
-  void AddRoundKey(uint8_t round);
-  void KeyExpansion(void);
-  void Cipher(void);
-  void InvCipher(void);
+  void mAddRoundKey(uint8_t round);
+  void mKeyExpansion(void);
 
+  void mShiftRows(void);
+  void mMixColumns(void);
+  void mSubBytes(void);
+
+  void mInvShiftRows(void);
+  void mInvMixColumns(void);
+  void mInvSubBytes(void);
+
+  void mCipher(void);
+  void mInvCipher(void);
 };
 
 #endif // WMNCIPHER_H

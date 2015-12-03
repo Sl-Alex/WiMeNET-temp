@@ -85,9 +85,6 @@ const uint8_t WmnCipher::mRcon[255] = {
 /*****************************************************************************/
 /* Private variables:                                                        */
 /*****************************************************************************/
-// state - array holding the intermediate results during decryption.
-typedef uint8_t state_t[4][4];
-static state_t* state;
 
 
 /*****************************************************************************/
@@ -104,7 +101,7 @@ uint8_t WmnCipher::mgetSBoxInvert(uint8_t num)
 }
 
 // This function produces Nb(Nr+1) round keys. The round keys are used in each round to decrypt the states.
-void WmnCipher::KeyExpansion(void)
+void WmnCipher::mKeyExpansion(void)
 {
   uint32_t i, j, k;
   uint8_t tempa[4]; // Used for the column/row operations
@@ -171,7 +168,7 @@ void WmnCipher::KeyExpansion(void)
 
 // This function adds the round key to state.
 // The round key is added to the state by an XOR function.
-void WmnCipher::AddRoundKey(uint8_t round)
+void WmnCipher::mAddRoundKey(uint8_t round)
 {
   uint8_t i,j;
   for(i=0;i<4;++i)
@@ -185,7 +182,7 @@ void WmnCipher::AddRoundKey(uint8_t round)
 
 // The SubBytes Function Substitutes the values in the
 // state matrix with values in an S-box.
-void WmnCipher::SubBytes(void)
+void WmnCipher::mSubBytes(void)
 {
   uint8_t i, j;
   for(i = 0; i < 4; ++i)
@@ -200,7 +197,7 @@ void WmnCipher::SubBytes(void)
 // The ShiftRows() function shifts the rows in the state to the left.
 // Each row is shifted with different offset.
 // Offset = Row number. So the first row is not shifted.
-static void ShiftRows(void)
+void WmnCipher::mShiftRows(void)
 {
   uint8_t temp;
 
@@ -234,7 +231,7 @@ static uint8_t xtime(uint8_t x)
 }
 
 // MixColumns function mixes the columns of the state matrix
-static void MixColumns(void)
+void WmnCipher::mMixColumns(void)
 {
   uint8_t i;
   uint8_t Tmp,Tm,t;
@@ -272,7 +269,7 @@ static uint8_t Multiply(uint8_t x, uint8_t y)
 // MixColumns function mixes the columns of the state matrix.
 // The method used to multiply may be difficult to understand for the inexperienced.
 // Please use the references to gain more information.
-static void InvMixColumns(void)
+void WmnCipher::mInvMixColumns(void)
 {
   int i;
   uint8_t a,b,c,d;
@@ -293,7 +290,7 @@ static void InvMixColumns(void)
 
 // The SubBytes Function Substitutes the values in the
 // state matrix with values in an S-box.
-void WmnCipher::InvSubBytes(void)
+void WmnCipher::mInvSubBytes(void)
 {
   uint8_t i,j;
   for(i=0;i<4;++i)
@@ -305,7 +302,7 @@ void WmnCipher::InvSubBytes(void)
   }
 }
 
-static void InvShiftRows(void)
+void WmnCipher::mInvShiftRows(void)
 {
   uint8_t temp;
 
@@ -335,57 +332,57 @@ static void InvShiftRows(void)
 
 
 // Cipher is the main function that encrypts the PlainText.
-void WmnCipher::Cipher(void)
+void WmnCipher::mCipher(void)
 {
   uint8_t round = 0;
 
   // Add the First round key to the state before starting the rounds.
-  AddRoundKey(0);
+  mAddRoundKey(0);
 
   // There will be Nr rounds.
   // The first Nr-1 rounds are identical.
   // These Nr-1 rounds are executed in the loop below.
   for(round = 1; round < Nr; ++round)
   {
-    SubBytes();
-    ShiftRows();
-    MixColumns();
-    AddRoundKey(round);
+    mSubBytes();
+    mShiftRows();
+    mMixColumns();
+    mAddRoundKey(round);
   }
 
   // The last round is given below.
   // The MixColumns function is not here in the last round.
-  SubBytes();
-  ShiftRows();
-  AddRoundKey(Nr);
+  mSubBytes();
+  mShiftRows();
+  mAddRoundKey(Nr);
 }
 
-void WmnCipher::InvCipher(void)
+void WmnCipher::mInvCipher(void)
 {
   uint8_t round=0;
 
   // Add the First round key to the state before starting the rounds.
-  AddRoundKey(Nr);
+  mAddRoundKey(Nr);
 
   // There will be Nr rounds.
   // The first Nr-1 rounds are identical.
   // These Nr-1 rounds are executed in the loop below.
   for(round=Nr-1;round>0;round--)
   {
-    InvShiftRows();
-    InvSubBytes();
-    AddRoundKey(round);
-    InvMixColumns();
+    mInvShiftRows();
+    mInvSubBytes();
+    mAddRoundKey(round);
+    mInvMixColumns();
   }
 
   // The last round is given below.
   // The MixColumns function is not here in the last round.
-  InvShiftRows();
-  InvSubBytes();
-  AddRoundKey(0);
+  mInvShiftRows();
+  mInvSubBytes();
+  mAddRoundKey(0);
 }
 
-static void BlockCopy(uint8_t* output, uint8_t* input)
+static inline void BlockCopy(uint8_t* output, uint8_t* input)
 {
   uint8_t i;
   for (i=0;i<KEYLEN;++i)
@@ -405,10 +402,10 @@ void WmnCipher::encryptBuffer(
   state = (state_t*)output;
 
   mKey = key;
-  KeyExpansion();
+  mKeyExpansion();
 
   // The next function call encrypts the PlainText with the Key using AES algorithm.
-  Cipher();
+  mCipher();
 }
 
 void WmnCipher::decryptBuffer(
@@ -422,7 +419,7 @@ void WmnCipher::decryptBuffer(
 
   // The KeyExpansion routine must be called before encryption.
   mKey = key;
-  KeyExpansion();
+  mKeyExpansion();
 
-  InvCipher();
+  mInvCipher();
 }

@@ -19,6 +19,7 @@ TRANSLATIONS    = wmn_tester_en.ts \
 
 LIBS +=          $$PWD\libs\libusb-1.0.a
 INCLUDEPATH +=   $$PWD/libs/inc/ \
+                 $$PWD/../wmn/ \
                  $$PWD/../wmn/driver/
 
 DEPENDPATH +=    $$PWD\libs\inc\
