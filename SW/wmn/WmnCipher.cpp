@@ -91,7 +91,7 @@ void WmnCipher::encryptBuffer(
   // Copy input to output, and work in-memory on output
   memcpy(output, input, WMN_CIPHER_BLOCK_SIZE);
   //BlockCopy(output, input);
-  state = (state_t*)output;
+  mState = (state_t*)output;
 
   mKey = key;
   mKeyExpansion();
@@ -136,7 +136,7 @@ void WmnCipher::decryptBuffer(
   // Copy input to output, and work in-memory on output
   memcpy(output, input, WMN_CIPHER_BLOCK_SIZE);
   //BlockCopy(output, input);
-  state = (state_t*)output;
+  mState = (state_t*)output;
 
   // The KeyExpansion routine must be called before encryption.
   mKey = key;
@@ -257,7 +257,7 @@ void WmnCipher::mAddRoundKey(uint8_t round)
   {
     for(j = 0; j < 4; ++j)
     {
-      (*state)[i][j] ^= mRoundKey[round * Nb * 4 + i * Nb + j];
+      (*mState)[i][j] ^= mRoundKey[round * Nb * 4 + i * Nb + j];
     }
   }
 }
@@ -272,7 +272,7 @@ void WmnCipher::mSubBytes(void)
   {
     for(j = 0; j < 4; ++j)
     {
-      (*state)[j][i] = mgetSBoxValue((*state)[j][i]);
+      (*mState)[j][i] = mgetSBoxValue((*mState)[j][i]);
     }
   }
 }
@@ -287,27 +287,27 @@ void WmnCipher::mShiftRows(void)
   uint8_t temp;
 
   // Rotate first row 1 columns to left
-  temp           = (*state)[0][1];
-  (*state)[0][1] = (*state)[1][1];
-  (*state)[1][1] = (*state)[2][1];
-  (*state)[2][1] = (*state)[3][1];
-  (*state)[3][1] = temp;
+  temp            = (*mState)[0][1];
+  (*mState)[0][1] = (*mState)[1][1];
+  (*mState)[1][1] = (*mState)[2][1];
+  (*mState)[2][1] = (*mState)[3][1];
+  (*mState)[3][1] = temp;
 
   // Rotate second row 2 columns to left
-  temp           = (*state)[0][2];
-  (*state)[0][2] = (*state)[2][2];
-  (*state)[2][2] = temp;
+  temp            = (*mState)[0][2];
+  (*mState)[0][2] = (*mState)[2][2];
+  (*mState)[2][2] = temp;
 
-  temp       = (*state)[1][2];
-  (*state)[1][2] = (*state)[3][2];
-  (*state)[3][2] = temp;
+  temp            = (*mState)[1][2];
+  (*mState)[1][2] = (*mState)[3][2];
+  (*mState)[3][2] = temp;
 
   // Rotate third row 3 columns to left
-  temp       = (*state)[0][3];
-  (*state)[0][3] = (*state)[3][3];
-  (*state)[3][3] = (*state)[2][3];
-  (*state)[2][3] = (*state)[1][3];
-  (*state)[1][3] = temp;
+  temp            = (*mState)[0][3];
+  (*mState)[0][3] = (*mState)[3][3];
+  (*mState)[3][3] = (*mState)[2][3];
+  (*mState)[2][3] = (*mState)[1][3];
+  (*mState)[1][3] = temp;
 }
 
 static uint8_t xtime(uint8_t x)
@@ -324,12 +324,12 @@ void WmnCipher::mMixColumns(void)
   uint8_t Tmp,Tm,t;
   for(i = 0; i < 4; ++i)
   {
-    t   = (*state)[i][0];
-    Tmp = (*state)[i][0] ^ (*state)[i][1] ^ (*state)[i][2] ^ (*state)[i][3] ;
-    Tm  = (*state)[i][0] ^ (*state)[i][1] ; Tm = xtime(Tm);  (*state)[i][0] ^= Tm ^ Tmp ;
-    Tm  = (*state)[i][1] ^ (*state)[i][2] ; Tm = xtime(Tm);  (*state)[i][1] ^= Tm ^ Tmp ;
-    Tm  = (*state)[i][2] ^ (*state)[i][3] ; Tm = xtime(Tm);  (*state)[i][2] ^= Tm ^ Tmp ;
-    Tm  = (*state)[i][3] ^ t ;        Tm = xtime(Tm);  (*state)[i][3] ^= Tm ^ Tmp ;
+    t   = (*mState)[i][0];
+    Tmp = (*mState)[i][0] ^ (*mState)[i][1] ^ (*mState)[i][2] ^ (*mState)[i][3] ;
+    Tm  = (*mState)[i][0] ^ (*mState)[i][1] ; Tm = xtime(Tm);   (*mState)[i][0] ^= Tm ^ Tmp ;
+    Tm  = (*mState)[i][1] ^ (*mState)[i][2] ; Tm = xtime(Tm);   (*mState)[i][1] ^= Tm ^ Tmp ;
+    Tm  = (*mState)[i][2] ^ (*mState)[i][3] ; Tm = xtime(Tm);   (*mState)[i][2] ^= Tm ^ Tmp ;
+    Tm  = (*mState)[i][3] ^ t ;        Tm = xtime(Tm);  (*mState)[i][3] ^= Tm ^ Tmp ;
   }
 }
 
@@ -357,15 +357,15 @@ void WmnCipher::mInvMixColumns(void)
   uint8_t a,b,c,d;
   for(i=0;i<4;++i)
   {
-    a = (*state)[i][0];
-    b = (*state)[i][1];
-    c = (*state)[i][2];
-    d = (*state)[i][3];
+    a = (*mState)[i][0];
+    b = (*mState)[i][1];
+    c = (*mState)[i][2];
+    d = (*mState)[i][3];
 
-    (*state)[i][0] = mMultiply(a, 0x0e) ^ mMultiply(b, 0x0b) ^ mMultiply(c, 0x0d) ^ mMultiply(d, 0x09);
-    (*state)[i][1] = mMultiply(a, 0x09) ^ mMultiply(b, 0x0e) ^ mMultiply(c, 0x0b) ^ mMultiply(d, 0x0d);
-    (*state)[i][2] = mMultiply(a, 0x0d) ^ mMultiply(b, 0x09) ^ mMultiply(c, 0x0e) ^ mMultiply(d, 0x0b);
-    (*state)[i][3] = mMultiply(a, 0x0b) ^ mMultiply(b, 0x0d) ^ mMultiply(c, 0x09) ^ mMultiply(d, 0x0e);
+    (*mState)[i][0] = mMultiply(a, 0x0e) ^ mMultiply(b, 0x0b) ^ mMultiply(c, 0x0d) ^ mMultiply(d, 0x09);
+    (*mState)[i][1] = mMultiply(a, 0x09) ^ mMultiply(b, 0x0e) ^ mMultiply(c, 0x0b) ^ mMultiply(d, 0x0d);
+    (*mState)[i][2] = mMultiply(a, 0x0d) ^ mMultiply(b, 0x09) ^ mMultiply(c, 0x0e) ^ mMultiply(d, 0x0b);
+    (*mState)[i][3] = mMultiply(a, 0x0b) ^ mMultiply(b, 0x0d) ^ mMultiply(c, 0x09) ^ mMultiply(d, 0x0e);
   }
 }
 
@@ -379,7 +379,7 @@ void WmnCipher::mInvSubBytes(void)
   {
     for(j=0;j<4;++j)
     {
-      (*state)[j][i] = mgetSBoxInvert((*state)[j][i]);
+      (*mState)[j][i] = mgetSBoxInvert((*mState)[j][i]);
     }
   }
 }
@@ -389,27 +389,27 @@ void WmnCipher::mInvShiftRows(void)
   uint8_t temp;
 
   // Rotate first row 1 columns to right
-  temp=(*state)[3][1];
-  (*state)[3][1]=(*state)[2][1];
-  (*state)[2][1]=(*state)[1][1];
-  (*state)[1][1]=(*state)[0][1];
-  (*state)[0][1]=temp;
+  temp=(*mState)[3][1];
+  (*mState)[3][1]=(*mState)[2][1];
+  (*mState)[2][1]=(*mState)[1][1];
+  (*mState)[1][1]=(*mState)[0][1];
+  (*mState)[0][1]=temp;
 
   // Rotate second row 2 columns to right
-  temp=(*state)[0][2];
-  (*state)[0][2]=(*state)[2][2];
-  (*state)[2][2]=temp;
+  temp=(*mState)[0][2];
+  (*mState)[0][2]=(*mState)[2][2];
+  (*mState)[2][2]=temp;
 
-  temp=(*state)[1][2];
-  (*state)[1][2]=(*state)[3][2];
-  (*state)[3][2]=temp;
+  temp=(*mState)[1][2];
+  (*mState)[1][2]=(*mState)[3][2];
+  (*mState)[3][2]=temp;
 
   // Rotate third row 3 columns to right
-  temp=(*state)[0][3];
-  (*state)[0][3]=(*state)[1][3];
-  (*state)[1][3]=(*state)[2][3];
-  (*state)[2][3]=(*state)[3][3];
-  (*state)[3][3]=temp;
+  temp=(*mState)[0][3];
+  (*mState)[0][3]=(*mState)[1][3];
+  (*mState)[1][3]=(*mState)[2][3];
+  (*mState)[2][3]=(*mState)[3][3];
+  (*mState)[3][3]=temp;
 }
 
 

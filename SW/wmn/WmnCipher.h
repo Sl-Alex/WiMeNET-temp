@@ -3,7 +3,13 @@
 
 #include "stdint.h"
 
+/*
+ * AES 128 implementation.
+ * Based on https://github.com/kokke/tiny-AES128-C
+ */
+
 /// Key (and also block) length in bytes [128 bit]
+/// Do not change
 #define WMN_CIPHER_BLOCK_SIZE   16
 
 class WmnCipher
@@ -20,7 +26,7 @@ private:
   typedef uint8_t state_t[4][4];
 
   // state - array holding the intermediate results during decryption.
-  state_t* state;
+  state_t* mState;
 
   // The Key input to the AES Program
   uint8_t* mKey;
@@ -45,7 +51,7 @@ private:
   void mInvMixColumns(void);
   void mInvSubBytes(void);
 
-  static uint8_t mMultiply(uint8_t x, uint8_t y);
+  uint8_t mMultiply(uint8_t x, uint8_t y);
 
   void mCipher(void);
   void mInvCipher(void);
