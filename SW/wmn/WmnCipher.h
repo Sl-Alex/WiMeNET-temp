@@ -3,7 +3,8 @@
 
 #include "stdint.h"
 
-#define WMN_CIPHER_BLOCK_SIZE   16  // Size of the cipher block, in bytes
+/// Key (and also block) length in bytes [128 bit]
+#define WMN_CIPHER_BLOCK_SIZE   16
 
 class WmnCipher
 {
@@ -30,8 +31,8 @@ private:
   // The array that stores the round keys.
   uint8_t mRoundKey[176];
 
-  static inline uint8_t mgetSBoxValue(uint8_t num);
-  static inline uint8_t mgetSBoxInvert(uint8_t num);
+  static uint8_t mgetSBoxValue(uint8_t num);
+  static uint8_t mgetSBoxInvert(uint8_t num);
 
   void mAddRoundKey(uint8_t round);
   void mKeyExpansion(void);
@@ -43,6 +44,8 @@ private:
   void mInvShiftRows(void);
   void mInvMixColumns(void);
   void mInvSubBytes(void);
+
+  static uint8_t mMultiply(uint8_t x, uint8_t y);
 
   void mCipher(void);
   void mInvCipher(void);

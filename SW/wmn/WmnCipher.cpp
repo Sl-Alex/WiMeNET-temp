@@ -1,29 +1,24 @@
 #include "WmnCipher.h"
+#include "string.h"
 
-/*****************************************************************************/
-/* Defines:                                                                  */
-/*****************************************************************************/
 // The number of columns comprising a state in AES. This is a constant in AES. Value=4
 #define Nb 4
 // The number of 32 bit words in a key.
 #define Nk 4
-// Key length in bytes [128 bit]
-#define KEYLEN 16
 // The number of rounds in AES Cipher.
 #define Nr 10
 
-// jcallan@github points out that declaring Multiply as a function
-// reduces code size considerably with the Keil ARM compiler.
-// See this link for more information: https://github.com/kokke/tiny-AES128-C/pull/3
-#ifndef MULTIPLY_AS_A_FUNCTION
-  #define MULTIPLY_AS_A_FUNCTION 0
-#endif
-
+/**
+ * @brief WmnCipher constructor
+ */
 WmnCipher::WmnCipher()
 {
 
 }
 
+// The lookup-tables are marked const so they can be placed in read-only storage instead of RAM
+// The numbers below can be computed dynamically trading ROM for RAM -
+// This can be useful in (embedded) bootloader applications, where ROM is often limited.
 const uint8_t WmnCipher::mSBox[256] =   {
   //0     1    2      3     4    5     6     7      8    9     A      B    C     D     E     F
   0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
@@ -82,25 +77,110 @@ const uint8_t WmnCipher::mRcon[255] = {
   0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd,
   0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb  };
 
-/*****************************************************************************/
-/* Private variables:                                                        */
-/*****************************************************************************/
+/**
+ * @brief Single 16-byte buffer encryption
+ * @param input : Pointer to the input array
+ * @param output : Pointer to the output array
+ * @param key : Pointer to the key
+ */
+void WmnCipher::encryptBuffer(
+        uint8_t* input,
+        uint8_t* output,
+        uint8_t* key)
+{
+  // Copy input to output, and work in-memory on output
+  memcpy(output, input, WMN_CIPHER_BLOCK_SIZE);
+  //BlockCopy(output, input);
+  state = (state_t*)output;
 
+  mKey = key;
+  mKeyExpansion();
 
-/*****************************************************************************/
-/* Private functions:                                                        */
-/*****************************************************************************/
-uint8_t WmnCipher::mgetSBoxValue(uint8_t num)
+  // The next function call encrypts the PlainText with the Key using AES algorithm.
+  mCipher();
+}
+
+/**
+ * @brief Several 16-byte buffers encryption
+ * @param input : Pointer to the input array
+ * @param output : Pointer to the output array
+ * @param blocks : Number of blocks to encode
+ * @param key : Pointer to the key
+ */
+void WmnCipher::encryptBuffer(
+        uint8_t* input,
+        uint8_t* output,
+        uint8_t blocks,
+        uint8_t* key)
+{
+  while (blocks > 0)
+  {
+    encryptBuffer(input, output, key);
+    input += WMN_CIPHER_BLOCK_SIZE;
+    output += WMN_CIPHER_BLOCK_SIZE;
+    blocks--;
+  }
+}
+
+/**
+ * @brief Single 16-byte buffer decryption
+ * @param input : Pointer to the input array
+ * @param output : Pointer to the output array
+ * @param key : Pointer to the key
+ */
+void WmnCipher::decryptBuffer(
+        uint8_t* input,
+        uint8_t *output,
+        uint8_t* key)
+{
+  // Copy input to output, and work in-memory on output
+  memcpy(output, input, WMN_CIPHER_BLOCK_SIZE);
+  //BlockCopy(output, input);
+  state = (state_t*)output;
+
+  // The KeyExpansion routine must be called before encryption.
+  mKey = key;
+  mKeyExpansion();
+
+  mInvCipher();
+}
+
+/**
+ * @brief Several 16-byte buffers decryption
+ * @param input : Pointer to the input array
+ * @param output : Pointer to the output array
+ * @param blocks : Number of blocks to decode
+ * @param key : Pointer to the key
+ */
+void WmnCipher::decryptBuffer(
+        uint8_t* input,
+        uint8_t *output,
+        uint8_t blocks,
+        uint8_t* key)
+{
+  while (blocks > 0)
+  {
+    decryptBuffer(input, output, key);
+    input += WMN_CIPHER_BLOCK_SIZE;
+    output += WMN_CIPHER_BLOCK_SIZE;
+    blocks--;
+  }
+}
+
+inline uint8_t WmnCipher::mgetSBoxValue(uint8_t num)
 {
   return mSBox[num];
 }
 
-uint8_t WmnCipher::mgetSBoxInvert(uint8_t num)
+inline uint8_t WmnCipher::mgetSBoxInvert(uint8_t num)
 {
   return mRSbox[num];
 }
 
-// This function produces Nb(Nr+1) round keys. The round keys are used in each round to decrypt the states.
+/**
+ * @brief This function produces Nb(Nr+1) round keys.
+ * The round keys are used in each round to decrypt the states.
+ */
 void WmnCipher::mKeyExpansion(void)
 {
   uint32_t i, j, k;
@@ -166,8 +246,10 @@ void WmnCipher::mKeyExpansion(void)
   }
 }
 
-// This function adds the round key to state.
-// The round key is added to the state by an XOR function.
+/**
+ * @brief Adds the round key to state
+ * @param round
+ */
 void WmnCipher::mAddRoundKey(uint8_t round)
 {
   uint8_t i,j;
@@ -180,8 +262,9 @@ void WmnCipher::mAddRoundKey(uint8_t round)
   }
 }
 
-// The SubBytes Function Substitutes the values in the
-// state matrix with values in an S-box.
+/**
+ * @brief Substitutes the values in the state matrix with values in an S-box.
+ */
 void WmnCipher::mSubBytes(void)
 {
   uint8_t i, j;
@@ -194,9 +277,11 @@ void WmnCipher::mSubBytes(void)
   }
 }
 
-// The ShiftRows() function shifts the rows in the state to the left.
-// Each row is shifted with different offset.
-// Offset = Row number. So the first row is not shifted.
+/**
+ * @brief Shifts the rows in the state to the left.
+ * Each row is shifted with different offset.
+ * Offset = Row number. So the first row is not shifted.
+ */
 void WmnCipher::mShiftRows(void)
 {
   uint8_t temp;
@@ -230,7 +315,9 @@ static uint8_t xtime(uint8_t x)
   return ((x<<1) ^ (((x>>7) & 1) * 0x1b));
 }
 
-// MixColumns function mixes the columns of the state matrix
+/**
+ * @brief Mixes the columns of the state matrix
+ */
 void WmnCipher::mMixColumns(void)
 {
   uint8_t i;
@@ -246,29 +333,24 @@ void WmnCipher::mMixColumns(void)
   }
 }
 
-// Multiply is used to multiply numbers in the field GF(2^8)
-#if MULTIPLY_AS_A_FUNCTION
-static uint8_t Multiply(uint8_t x, uint8_t y)
+/**
+ * @brief Multiply numbers in the field GF(2^8)
+ */
+uint8_t WmnCipher::mMultiply(uint8_t x, uint8_t y)
 {
   return (((y & 1) * x) ^
        ((y>>1 & 1) * xtime(x)) ^
        ((y>>2 & 1) * xtime(xtime(x))) ^
        ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^
        ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))));
-  }
-#else
-#define Multiply(x, y)                                \
-      (  ((y & 1) * x) ^                              \
-      ((y>>1 & 1) * xtime(x)) ^                       \
-      ((y>>2 & 1) * xtime(xtime(x))) ^                \
-      ((y>>3 & 1) * xtime(xtime(xtime(x)))) ^         \
-      ((y>>4 & 1) * xtime(xtime(xtime(xtime(x))))))   \
+}
 
-#endif
-
-// MixColumns function mixes the columns of the state matrix.
-// The method used to multiply may be difficult to understand for the inexperienced.
-// Please use the references to gain more information.
+/**
+ * @brief Mixes the columns of the state matrix.
+ * The method used to multiply may be difficult to
+ * understand for the inexperienced.
+ * Please use the references to gain more information.
+ */
 void WmnCipher::mInvMixColumns(void)
 {
   int i;
@@ -280,16 +362,16 @@ void WmnCipher::mInvMixColumns(void)
     c = (*state)[i][2];
     d = (*state)[i][3];
 
-    (*state)[i][0] = Multiply(a, 0x0e) ^ Multiply(b, 0x0b) ^ Multiply(c, 0x0d) ^ Multiply(d, 0x09);
-    (*state)[i][1] = Multiply(a, 0x09) ^ Multiply(b, 0x0e) ^ Multiply(c, 0x0b) ^ Multiply(d, 0x0d);
-    (*state)[i][2] = Multiply(a, 0x0d) ^ Multiply(b, 0x09) ^ Multiply(c, 0x0e) ^ Multiply(d, 0x0b);
-    (*state)[i][3] = Multiply(a, 0x0b) ^ Multiply(b, 0x0d) ^ Multiply(c, 0x09) ^ Multiply(d, 0x0e);
+    (*state)[i][0] = mMultiply(a, 0x0e) ^ mMultiply(b, 0x0b) ^ mMultiply(c, 0x0d) ^ mMultiply(d, 0x09);
+    (*state)[i][1] = mMultiply(a, 0x09) ^ mMultiply(b, 0x0e) ^ mMultiply(c, 0x0b) ^ mMultiply(d, 0x0d);
+    (*state)[i][2] = mMultiply(a, 0x0d) ^ mMultiply(b, 0x09) ^ mMultiply(c, 0x0e) ^ mMultiply(d, 0x0b);
+    (*state)[i][3] = mMultiply(a, 0x0b) ^ mMultiply(b, 0x0d) ^ mMultiply(c, 0x09) ^ mMultiply(d, 0x0e);
   }
 }
 
-
-// The SubBytes Function Substitutes the values in the
-// state matrix with values in an S-box.
+/**
+ * @brief Substitutes the values in the state matrix with values in an S-box.
+ */
 void WmnCipher::mInvSubBytes(void)
 {
   uint8_t i,j;
@@ -331,7 +413,9 @@ void WmnCipher::mInvShiftRows(void)
 }
 
 
-// Cipher is the main function that encrypts the PlainText.
+/**
+ * @brief Main function that encrypts the PlainText.
+ */
 void WmnCipher::mCipher(void)
 {
   uint8_t round = 0;
@@ -357,6 +441,9 @@ void WmnCipher::mCipher(void)
   mAddRoundKey(Nr);
 }
 
+/**
+ * @brief Main function that decrypts the PlainText.
+ */
 void WmnCipher::mInvCipher(void)
 {
   uint8_t round=0;
@@ -380,76 +467,4 @@ void WmnCipher::mInvCipher(void)
   mInvShiftRows();
   mInvSubBytes();
   mAddRoundKey(0);
-}
-
-static inline void BlockCopy(uint8_t* output, uint8_t* input)
-{
-  uint8_t i;
-  for (i=0;i<KEYLEN;++i)
-  {
-    output[i] = input[i];
-  }
-}
-
-
-void WmnCipher::encryptBuffer(
-        uint8_t* input,
-        uint8_t* output,
-        uint8_t* key)
-{
-  // Copy input to output, and work in-memory on output
-  BlockCopy(output, input);
-  state = (state_t*)output;
-
-  mKey = key;
-  mKeyExpansion();
-
-  // The next function call encrypts the PlainText with the Key using AES algorithm.
-  mCipher();
-}
-
-void WmnCipher::encryptBuffer(
-        uint8_t* input,
-        uint8_t* output,
-        uint8_t blocks,
-        uint8_t* key)
-{
-    while (blocks > 0)
-    {
-        encryptBuffer(input, output, key);
-        input += WMN_CIPHER_BLOCK_SIZE;
-        output += WMN_CIPHER_BLOCK_SIZE;
-        blocks--;
-    }
-}
-
-void WmnCipher::decryptBuffer(
-        uint8_t* input,
-        uint8_t *output,
-        uint8_t* key)
-{
-  // Copy input to output, and work in-memory on output
-  BlockCopy(output, input);
-  state = (state_t*)output;
-
-  // The KeyExpansion routine must be called before encryption.
-  mKey = key;
-  mKeyExpansion();
-
-  mInvCipher();
-}
-
-void WmnCipher::decryptBuffer(
-        uint8_t* input,
-        uint8_t *output,
-        uint8_t blocks,
-        uint8_t* key)
-{
-    while (blocks > 0)
-    {
-        decryptBuffer(input, output, key);
-        input += WMN_CIPHER_BLOCK_SIZE;
-        output += WMN_CIPHER_BLOCK_SIZE;
-        blocks--;
-    }
 }
