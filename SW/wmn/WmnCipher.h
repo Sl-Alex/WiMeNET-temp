@@ -11,8 +11,9 @@ public:
   WmnCipher();
 
   void encryptBuffer(uint8_t * buffer_in, uint8_t * buffer_out, uint8_t* key);
+  void encryptBuffer(uint8_t * buffer_in, uint8_t * buffer_out, uint8_t blocks, uint8_t* key);
   void decryptBuffer(uint8_t * buffer_in, uint8_t * buffer_out, uint8_t* key);
-
+  void decryptBuffer(uint8_t * buffer_in, uint8_t * buffer_out, uint8_t blocks, uint8_t* key);
 
 private:
   typedef uint8_t state_t[4][4];

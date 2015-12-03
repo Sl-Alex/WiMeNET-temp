@@ -408,6 +408,21 @@ void WmnCipher::encryptBuffer(
   mCipher();
 }
 
+void WmnCipher::encryptBuffer(
+        uint8_t* input,
+        uint8_t* output,
+        uint8_t blocks,
+        uint8_t* key)
+{
+    while (blocks > 0)
+    {
+        encryptBuffer(input, output, key);
+        input += WMN_CIPHER_BLOCK_SIZE;
+        output += WMN_CIPHER_BLOCK_SIZE;
+        blocks--;
+    }
+}
+
 void WmnCipher::decryptBuffer(
         uint8_t* input,
         uint8_t *output,
@@ -422,4 +437,19 @@ void WmnCipher::decryptBuffer(
   mKeyExpansion();
 
   mInvCipher();
+}
+
+void WmnCipher::decryptBuffer(
+        uint8_t* input,
+        uint8_t *output,
+        uint8_t blocks,
+        uint8_t* key)
+{
+    while (blocks > 0)
+    {
+        decryptBuffer(input, output, key);
+        input += WMN_CIPHER_BLOCK_SIZE;
+        output += WMN_CIPHER_BLOCK_SIZE;
+        blocks--;
+    }
 }
