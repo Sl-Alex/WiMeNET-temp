@@ -5,6 +5,8 @@
 #include <QString>
 #include "libusb.h"
 
+#include "WmnDriverUsb.h"
+
 class Transceiver : public QObject
 {
     Q_OBJECT
@@ -26,10 +28,16 @@ public slots:
 signals:
     void statusChanged();
     void packetReceived(QString txt);
+    void test();
 
 private:
     libusb_device_handle * dev_handle;
     int m_status;
+    WmnDriverUsb * mDrv;
+private slots:
+    void RxDone(int value);
+    void connected(void);
+    void disconnected(void);
 };
 
 #endif // TRANSCEIVER_H

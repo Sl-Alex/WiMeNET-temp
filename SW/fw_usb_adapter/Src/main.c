@@ -42,6 +42,7 @@ void wireless_rx_cb(WmnPacket * rx_packet)
 }
 
 extern uint8_t Bulk_Data_Buff[64];
+extern uint8_t usb_tx;
 /*******************************************************************************
 * Function Name  : main.
 * Description    : main routine.
@@ -90,11 +91,10 @@ int main(void)
 
     if (bDeviceState == CONFIGURED)
     {
-      if (PrevXferComplete)
-      {
+//      if (PrevXferComplete)
+//      {
         //RHIDCheckState();
-      }
-    }
+//      }
         #define RECEIVER
         #ifdef RECEIVER
         /*if (wmn_driver_receive(&packet,10000) != 0)
@@ -126,6 +126,15 @@ int main(void)
                 delay_hw_ms(333);*/
             }
         }
+        if (usb_tx == 0)
+        {
+            if (wmn_queue_read(&rx_queue, (WmnPacket *)&Bulk_Data_Buff, 0))
+            {
+                usb_tx = 1;
+                USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
+                SetEPTxValid(ENDP1);
+            }
+        }
             sprintf(tstr,"Q %2u",rx_queue.count);
             //sprintf(tstr,"Q %2u CNT %3u",0,cnt);
             lcd8544_putstr(0,33,tstr,0, 0);
@@ -133,6 +142,7 @@ int main(void)
             //lcd8544_putstr(0,40,tstr,0, 0);*/
             lcd8544_refresh();
         #endif
+    }
   }
 }
 

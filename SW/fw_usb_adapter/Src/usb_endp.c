@@ -52,6 +52,8 @@ uint8_t Bulk_Data_Buff[0x40];
 
 extern wmn_queue_t rx_queue;
 
+volatile uint8_t usb_tx = 0;
+
 void EP1_IN_Callback(void)
 {
     //Bulk_Data_Buff[0]++;
@@ -61,8 +63,13 @@ void EP1_IN_Callback(void)
     if (wmn_queue_read(&rx_queue, (WmnPacket *)&Bulk_Data_Buff, 1))
     {
         USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
+        SetEPTxValid(ENDP1);
+        usb_tx = 1;
     }
-    SetEPTxValid(ENDP1);
+    else
+    {
+        usb_tx = 0;
+    }
 }
 
 /*******************************************************************************
@@ -78,8 +85,8 @@ void EP2_OUT_Callback(void)
 
   // Read received data (2 bytes)
     USB_SIL_Read(EP2_OUT, Bulk_Data_Buff);
-    USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
-  SetEPTxStatus(ENDP1, EP_TX_VALID);
+//    USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
+//  SetEPTxStatus(ENDP1, EP_TX_VALID);
 
   if (Bulk_Data_Buff[0] == 0)
   {

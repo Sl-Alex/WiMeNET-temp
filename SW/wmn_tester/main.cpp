@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QQmlComponent>
 #include <QQmlEngine>
+#include <QQmlContext>
 #include <QQuickWindow>
 #include <QSurfaceFormat>
 #include "transceiver.h"
@@ -14,30 +15,32 @@
 
 #include "WmnCipher.h"
 
+#include "WmnDriverUsb.h"
+
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-    WmnDriver * drv = new WmnDriver();
+    //WmnDriver * drv = new WmnDriver();
 
     TestClass * tst1 = new TestClass(10);
     TestClass * tst2 = new TestClass(20);
 
-    drv->Sleep();
+    //drv->Sleep();
 
 
     int tmp = 0;
 
-    drv->setTestCallback(tst1, TestClass::onRxCallback);
-    tmp = drv->runTestCallback(1);
-    drv->setTestCallback(tst2, TestClass::onRxCallback);
-    tmp = drv->runTestCallback(3);
+    //drv->setTestCallback(tst1, TestClass::onRxCallback);
+    //tmp = drv->runTestCallback(1);
+    //drv->setTestCallback(tst2, TestClass::onRxCallback);
+    //tmp = drv->runTestCallback(3);
 
-    drv->setTestCallback(tst1, TestClass::onRxCallback);
-    tmp = drv->runTestCallback(5);
-    drv->setTestCallback(tst2, TestClass::onRxCallback);
-    tmp = drv->runTestCallback(7);
+    //drv->setTestCallback(tst1, TestClass::onRxCallback);
+    //tmp = drv->runTestCallback(5);
+    //drv->setTestCallback(tst2, TestClass::onRxCallback);
+    //tmp = drv->runTestCallback(7);
 
     WmnCipher * cph = new WmnCipher();
 
@@ -85,10 +88,16 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+//    WmnDriverUsb * drvusb = new WmnDriverUsb(0x2345, 0x0000);
+//    drvusb->start();
 
-
+//    engine.rootContext()->setContextProperty("drvusb", drvusb);
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
+    app.exec();
 
-    return app.exec();
+//    drvusb->quit();
+//    drvusb->wait();
+
+    return 0;
 }

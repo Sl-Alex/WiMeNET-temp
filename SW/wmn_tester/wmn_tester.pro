@@ -1,13 +1,14 @@
 TEMPLATE = app
 
-QT += qml quick widgets
+QT += concurrent qml quick widgets
 
 SOURCES += main.cpp \
     transceiver.cpp \
     testclass.cpp \
     ../wmn/driver/usb_crossplaform/WmnDriver.cpp \
     ../wmn/WmnNetwork.cpp \
-    ../wmn/WmnCipher.cpp
+    ../wmn/WmnCipher.cpp \
+    ../wmn/driver/usb_crossplaform/WmnDriverUsb.cpp
 
 lupdate_only{
 SOURCES += *.qml \
@@ -20,7 +21,8 @@ TRANSLATIONS    = wmn_tester_en.ts \
 LIBS +=          $$PWD\libs\libusb-1.0.a
 INCLUDEPATH +=   $$PWD/libs/inc/ \
                  $$PWD/../wmn/ \
-                 $$PWD/../wmn/driver/
+                 $$PWD/../wmn/driver/ \
+                 $$PWD/../wmn/driver/usb_crossplaform/
 
 DEPENDPATH +=    $$PWD\libs\inc\
 # PRE_TARGETDEPS+= $$PWD\libs\libusb-1.0.a
@@ -36,9 +38,10 @@ include(deployment.pri)
 HEADERS += \
     transceiver.h \
     testclass.h \
-    ../wmn/driver/WmnDriver.h \
     ../wmn/WmnPacket.h \
     ../wmn/WmnNetwork.h \
-    ../wmn/WmnCipher.h
+    ../wmn/WmnCipher.h \
+    ../wmn/driver/usb_crossplaform/WmnDriver.h \
+    ../wmn/driver/usb_crossplaform/WmnDriverUsb.h
 
 FORMS +=

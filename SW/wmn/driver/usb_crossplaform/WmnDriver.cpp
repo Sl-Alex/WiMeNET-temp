@@ -1,77 +1,59 @@
 #include "WmnDriver.h"
 
+
+//using namespace QtConcurrent;
+
+#include "stdio.h"
+
 WmnDriver::WmnDriver()
 {
-    mState = WMN_DRIVER_RX;
 }
 
 WmnDriver::~WmnDriver()
 {
-
+//    libusb_exit(mLibUsbContext);
 }
 
-void WmnDriver::Sleep(void)
+void WmnDriver::emitStatusChanged()
 {
-    mState = WMN_DRIVER_SLEEP;
+    emit statusChanged();
 }
 
-void WmnDriver::Wake(void)
+int WmnDriver::Init(void)
 {
-    mState = WMN_DRIVER_RX;
+    /* Get the first device with the matching Vendor ID and Product ID. If
+     * intending to allow multiple demo boards to be connected at once, you
+     * will need to use libusb_get_device_list() instead. Refer to the libusb
+     * documentation for details. */
+//    if (mDevHandle != NULL){
+//        DeInit();
+//    }
+//    mDevHandle = libusb_open_device_with_vid_pid(mLibUsbContext, WMN_DRIVER_VID, WMN_DRIVER_PID);
+//    if (mDevHandle != NULL)
+//    {
+//        libusb_claim_interface(mDevHandle, 0);
+//        StartRx();
+        /// @todo update state
+//        return 1;
+//    }
+//    else
+//    {
+        /// @todo update state
+        return 0;
+//    }
 }
 
-WmnDriverState WmnDriver::getState(void)
+void WmnDriver::DeInit(void)
 {
-    /// @todo: Implement
-    return mState;
-}
+//    if (mDevHandle == NULL) return;
 
-void WmnDriver::setRxCallback(void * obj, WmnDriver::RxCallback value)
-{
-    mRxCallbackObj = obj;
-    mRxCallback = value;
-}
+//    RxThreadState = false;
 
-void WmnDriver::setTestCallback(void * obj, WmnDriver::TestCallback value)
-{
-    mTestCallbackObj = obj;
-    mTestCallback = value;
-}
+//    int tmp = mFuture.result();
+//    tmp++;
 
+//    libusb_release_interface(mDevHandle, 0);
+//    libusb_close(mDevHandle);
 
-int WmnDriver::runTestCallback(int value)
-{
-    return mTestCallback(mTestCallbackObj, value);
-}
-
-// C style functions
-extern "C" {
-
-CWmnDriver * CWmnDriver_Create(void)
-{
-    WmnDriver * out = new WmnDriver();
-    return ((CWmnDriver * )out);
-}
-
-void CWmnDriver_Destroy(CWmnDriver * driver)
-{
-    delete ((WmnDriver *)driver);
-}
-
-void CWmnDriver_Sleep(CWmnDriver * driver)
-{
-    ((WmnDriver *)driver)->Sleep();
-}
-
-void CWmnDriver_Wake(CWmnDriver * driver)
-{
-    ((WmnDriver *)driver)->Wake();
-}
-
-
-WmnDriverState CWmnDriver_getState(CWmnDriver * driver)
-{
-    return ((WmnDriver *)driver)->getState();
-}
-
+//    mDevHandle = NULL;
 }

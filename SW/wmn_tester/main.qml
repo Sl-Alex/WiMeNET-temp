@@ -2,16 +2,26 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
+
 import com.ics.demo 1.0
 
 
-
 ApplicationWindow {
+    id: testwnd
     title: qsTr("STM32 USB Bulk")
     width: 500
     height: 217
     visible: true
 
+/*    Connections {
+        target: drvusb
+        onSendTime:
+        {
+            console.log("Text Changed: " + time);
+            testwnd.title = time;
+        }
+    }
+*/
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
