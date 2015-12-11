@@ -3,9 +3,9 @@
 Transceiver::Transceiver()
 {
     mDrv = new WmnDriverUsb(0x2345, 0x0000);
-    QObject::connect(mDrv, SIGNAL(PacketReceived(int)), this, SLOT(RxDone(int)));
-    QObject::connect(mDrv, SIGNAL(connected()), this, SLOT(connected()));
-    QObject::connect(mDrv, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    QObject::connect(mDrv, &WmnDriverUsb::PacketReceived, this, &Transceiver::RxDone);
+    QObject::connect(mDrv, &WmnDriverUsb::connected, this, &Transceiver::connected);
+    QObject::connect(mDrv, &WmnDriverUsb::disconnected, this, &Transceiver::disconnected);
 }
 
 Transceiver::~Transceiver()
