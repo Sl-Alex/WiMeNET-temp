@@ -29,6 +29,7 @@ void wmn_queue_init(wmn_queue_t * queue)
 uint8_t wmn_queue_write(wmn_queue_t * queue, WmnPacket * packet, uint8_t in_irq)
 {
     uint8_t ret = 0;
+    in_irq = 0;
     if (in_irq == 0) asm("cpsid i");
 	// Clear EMPTY flag
 	queue->flags &= ~WMN_QUEUE_FLAG_IS_EMPTY;
@@ -56,6 +57,7 @@ uint8_t wmn_queue_write(wmn_queue_t * queue, WmnPacket * packet, uint8_t in_irq)
 uint8_t wmn_queue_read(wmn_queue_t * queue, WmnPacket * packet, uint8_t in_irq)
 {
     uint8_t ret = 0;
+    in_irq = 0;
     if (in_irq == 0) asm("cpsid i");
 	if (queue->count > 0)
 	{

@@ -48,7 +48,8 @@
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-uint8_t Bulk_Data_Buff[0x40];
+uint8_t usb_buff_rx[0x40];
+uint8_t usb_buff_tx[0x40];
 
 extern wmn_queue_t rx_queue;
 
@@ -60,9 +61,9 @@ void EP1_IN_Callback(void)
     /* Copy mouse position info in ENDP1 Tx Packet Memory Area*/
 //    USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
     /* Enable endpoint for transmission */
-    if (wmn_queue_read(&rx_queue, (WmnPacket *)&Bulk_Data_Buff, 1))
+    if (wmn_queue_read(&rx_queue, (WmnPacket *)&usb_buff_tx, 1))
     {
-        USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
+        USB_SIL_Write(EP1_IN, usb_buff_tx, 0x40);
         SetEPTxValid(ENDP1);
         usb_tx = 1;
     }
@@ -84,11 +85,11 @@ void EP2_OUT_Callback(void)
   //BitAction Led_State;
 
   // Read received data (2 bytes)
-    USB_SIL_Read(EP2_OUT, Bulk_Data_Buff);
+    USB_SIL_Read(EP2_OUT, usb_buff_rx);
 //    USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
 //  SetEPTxStatus(ENDP1, EP_TX_VALID);
 
-  if (Bulk_Data_Buff[0] == 0)
+  if (usb_buff_rx[0] == 0)
   {
        GPIO_SetBits(LED_PORT,LED1_PIN);
   }

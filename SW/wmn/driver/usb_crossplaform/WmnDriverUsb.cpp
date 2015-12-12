@@ -20,8 +20,14 @@ volatile bool tx_done;
 
 static void CALLBACK usb_rx_cb(struct libusb_transfer *xfr)
 {
-    rx_done = true;
     ((WmnDriverUsb *) xfr->user_data)->updateConnection(xfr->status);
+    if (((WmnDriverUsb *) xfr->user_data)->mConnected)
+    {
+        if (xfr->actual_length != 0x40)
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
+        else
+            rx_done = true;
+    }
     switch(xfr->status)
     {
         case LIBUSB_TRANSFER_COMPLETED:
@@ -80,6 +86,18 @@ void WmnDriverUsb::updateConnection(int value)
     mConnected = false;
 }
 
+void WmnDriverUsb::Disconnect()
+{
+    mConnected = false;
+    libusb_cancel_transfer(mRxTransfer);
+    libusb_cancel_transfer(mTxTransfer);
+    libusb_free_transfer(mRxTransfer);
+    libusb_free_transfer(mTxTransfer);
+    libusb_release_interface(mDevHandle, 0);
+    libusb_close(mDevHandle);
+    libusb_exit(mLibUsbContext);
+}
+
 void WmnDriverUsb::run()
 {
     int libusb_status = LIBUSB_SUCCESS;
@@ -90,6 +108,9 @@ void WmnDriverUsb::run()
 
     while (mQuitRequest == false)
     {
+        // Process events
+        QApplication::processEvents();
+
         // Check if we have to connect
         if (mConnected == false)
         {
@@ -151,16 +172,17 @@ void WmnDriverUsb::run()
 
             if(libusb_submit_transfer(mRxTransfer) < 0)
             {
-                /// @todo Error
+                Disconnect();
             }
 
             /// @todo Implement
             //if (have_untransmitted_data)
             if(libusb_submit_transfer(mTxTransfer) < 0)
             {
-                /// @todo Error
+                Disconnect();
             }
         }
+        if (mConnected == false) continue;
         // We are already connected at this point
         if (rx_done)
         {
@@ -171,9 +193,10 @@ void WmnDriverUsb::run()
             rx_done = false;
             if(libusb_submit_transfer(mRxTransfer) < 0)
             {
-                // Error
+                Disconnect();
             }
         }
+        if (mConnected == false) continue;
         if (tx_done)
         {
             /// @todo Implement
@@ -182,43 +205,24 @@ void WmnDriverUsb::run()
             mTxPacket.data[0] = 1 - mTxPacket.data[0];
             if(libusb_submit_transfer(mTxTransfer) < 0)
             {
-                // Error
+                Disconnect();
             }
         }
-        libusb_status = libusb_handle_events(mLibUsbContext);
-        /// @todo Implement error handling
-        //if(libusb_handle_events(mLibUsbContext) != LIBUSB_SUCCESS) break;
+        if (mConnected == false) continue;
 
+        libusb_status = libusb_handle_events(mLibUsbContext);
         updateConnection(libusb_status);
 
         // Error handling (connection/disconnection and so on)
         if (mConnected == false)
         {
-            libusb_cancel_transfer(mRxTransfer);
-            libusb_cancel_transfer(mTxTransfer);
-            libusb_free_transfer(mRxTransfer);
-            libusb_free_transfer(mTxTransfer);
-            libusb_release_interface(mDevHandle, 0);
-            libusb_close(mDevHandle);
-            libusb_exit(mLibUsbContext);
+            Disconnect();
             emit disconnected();
         }
-
-        QApplication::processEvents();
-        //usleep(1);
     }
     if (mConnected)
     {
-        libusb_cancel_transfer(mRxTransfer);
-        libusb_cancel_transfer(mTxTransfer);
-        //libusb_handle_events_completed(mLibUsbContext, NULL);
-        libusb_free_transfer(mRxTransfer);
-        libusb_free_transfer(mTxTransfer);
-        libusb_release_interface(mDevHandle, 0);
-        libusb_close(mDevHandle);
-        libusb_exit(mLibUsbContext);
-
-        mConnected = false;
+        Disconnect();
         emit disconnected();
     }
 }
@@ -226,17 +230,6 @@ void WmnDriverUsb::run()
 void WmnDriverUsb::quit()
 {
     mQuitRequest = true;
-}
-
-void WmnDriverUsb::timerHit()
-{
-/*
-    QString newTime= QDateTime::currentDateTime().toString("ddd MMMM d yy, hh:mm:ss");
-    if(m_lastTime != newTime ){
-        m_lastTime = newTime;
-        emit sendTime(newTime) ;
-    }
-*/
 }
 
 void WmnDriverUsb::writePacket(DriverPacket value)

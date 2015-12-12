@@ -41,7 +41,7 @@ void wireless_rx_cb(WmnPacket * rx_packet)
     rx_cnt++;
 }
 
-extern uint8_t Bulk_Data_Buff[64];
+extern uint8_t usb_buff_tx[64];
 extern uint8_t usb_tx;
 /*******************************************************************************
 * Function Name  : main.
@@ -128,16 +128,24 @@ int main(void)
         }
         if (usb_tx == 0)
         {
-            if (wmn_queue_read(&rx_queue, (WmnPacket *)&Bulk_Data_Buff, 0))
+            if (wmn_queue_read(&rx_queue, (WmnPacket *)&usb_buff_tx, 0))
             {
+                for (y = 0; y < 8; y++)
+                {
+                    for (x = 0; x < 8; x++)
+                    {
+                       sprintf(tstr, "%2X", usb_buff_tx[8 * y + x]);
+                        lcd8544_putstr(x*(7+3), y*6, tstr, 0, 1);
+                    }
+                }
                 usb_tx = 1;
-                USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
+                USB_SIL_Write(EP1_IN, usb_buff_tx, 0x40);
                 SetEPTxValid(ENDP1);
             }
         }
-            sprintf(tstr,"Q %2u",rx_queue.count);
+            //sprintf(tstr,"Q %2u",rx_queue.count);
             //sprintf(tstr,"Q %2u CNT %3u",0,cnt);
-            lcd8544_putstr(0,33,tstr,0, 0);
+            //lcd8544_putstr(0,33,tstr,0, 0);
             //sprintf(tstr,"RS %3i LQ %3u",-packet.packet.rssi, packet.packet.lqi);
             //lcd8544_putstr(0,40,tstr,0, 0);*/
             lcd8544_refresh();

@@ -27,6 +27,7 @@ public:
 
     struct libusb_context *mLibUsbContext;
     libusb_device_handle * mDevHandle;
+    volatile bool mConnected;
     void updateConnection(int value);
 
     void writePacket(DriverPacket value);
@@ -41,18 +42,16 @@ private:
 
     uint16_t mVid, mPid;
     volatile bool mQuitRequest;
-    volatile bool mConnected;
     struct libusb_transfer *mRxTransfer;
     struct libusb_transfer *mTxTransfer;
+
+    void Disconnect(void);
 
     QQueue<DriverPacket> mRxQueue;
     QQueue<DriverPacket> mTxQueue;
 
     QMutex mRxMutex;
     QMutex mTxMutex;
-
-private slots:
-    void timerHit();
 };
 
 #endif // WMNDRIVERUSB_H
