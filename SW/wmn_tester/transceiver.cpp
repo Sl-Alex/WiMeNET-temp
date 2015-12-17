@@ -62,6 +62,9 @@ void Transceiver::disconnect()
 
 int Transceiver::send(int num)
 {
+    WmnDriverUsb::DriverPacket pkt;
+    pkt.data[0] = num;
+    mDrv->writePacket(pkt);
     return num + 0x40;
 }
 

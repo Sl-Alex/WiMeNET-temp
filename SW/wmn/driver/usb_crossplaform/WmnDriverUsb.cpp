@@ -15,19 +15,14 @@ WmnDriverUsb::~WmnDriverUsb()
 //    libusb_exit(mLibUsbContext);
 }
 
-volatile bool rx_done;
-volatile bool tx_done;
+volatile bool rx_cb_done;
+volatile bool tx_cb_done;
+volatile bool rx_success;
+volatile bool tx_success;
 
 static void CALLBACK usb_rx_cb(struct libusb_transfer *xfr)
 {
-    ((WmnDriverUsb *) xfr->user_data)->updateConnection(xfr->status);
-    if (((WmnDriverUsb *) xfr->user_data)->mConnected)
-    {
-        if (xfr->actual_length != 0x40)
-            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
-        else
-            rx_done = true;
-    }
+    rx_cb_done = true;
     switch(xfr->status)
     {
         case LIBUSB_TRANSFER_COMPLETED:
@@ -35,22 +30,30 @@ static void CALLBACK usb_rx_cb(struct libusb_transfer *xfr)
             // xfr->buffer
             // and the length is
             // xfr->actual_length
+            rx_success = true;
             break;
         case LIBUSB_TRANSFER_CANCELLED:
+            break;
         case LIBUSB_TRANSFER_NO_DEVICE:
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
+            break;
         case LIBUSB_TRANSFER_TIMED_OUT:
+            break;
         case LIBUSB_TRANSFER_ERROR:
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
+            break;
         case LIBUSB_TRANSFER_STALL:
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
+            break;
         case LIBUSB_TRANSFER_OVERFLOW:
-            // Various type of errors here
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
             break;
     }
 }
 
 static void CALLBACK usb_tx_cb(struct libusb_transfer *xfr)
 {
-    tx_done = true;
-    ((WmnDriverUsb *) xfr->user_data)->updateConnection(xfr->status);
+    tx_cb_done = true;
     switch(xfr->status)
     {
         case LIBUSB_TRANSFER_COMPLETED:
@@ -58,14 +61,23 @@ static void CALLBACK usb_tx_cb(struct libusb_transfer *xfr)
             // xfr->buffer
             // and the length is
             // xfr->actual_length
+            tx_success = true;
             break;
         case LIBUSB_TRANSFER_CANCELLED:
+            break;
         case LIBUSB_TRANSFER_NO_DEVICE:
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
+            break;
         case LIBUSB_TRANSFER_TIMED_OUT:
+            break;
         case LIBUSB_TRANSFER_ERROR:
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
+            break;
         case LIBUSB_TRANSFER_STALL:
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
+            break;
         case LIBUSB_TRANSFER_OVERFLOW:
-            // Various type of errors here
+            ((WmnDriverUsb *) xfr->user_data)->mConnected = false;
             break;
     }
 }
@@ -101,6 +113,9 @@ void WmnDriverUsb::Disconnect()
 void WmnDriverUsb::run()
 {
     int libusb_status = LIBUSB_SUCCESS;
+    struct timeval zero_tv;
+    zero_tv.tv_sec = 0;
+    zero_tv.tv_usec = 0;
 
     mQuitRequest = false;
     mDevHandle = NULL;
@@ -165,52 +180,73 @@ void WmnDriverUsb::run()
                                       5000
                                       );
 
-            rx_done = false;
-            tx_done = false;
+            rx_cb_done = true;
+            tx_cb_done = true;
+            tx_success = true;
 
             emit connected();
-
-            if(libusb_submit_transfer(mRxTransfer) < 0)
-            {
-                Disconnect();
-            }
-
-            /// @todo Implement
-            //if (have_untransmitted_data)
-            if(libusb_submit_transfer(mTxTransfer) < 0)
-            {
-                Disconnect();
-            }
         }
         if (mConnected == false) continue;
         // We are already connected at this point
-        if (rx_done)
+        if (rx_cb_done)
         {
-            mRxMutex.lock();
-            mRxQueue.enqueue(mRxPacket);
-            mRxMutex.unlock();
-            emit PacketReceived(mRxQueue.count());
-            rx_done = false;
+            if (rx_success)
+            {
+                rx_success = false;
+                mRxMutex.lock();
+                mRxQueue.enqueue(mRxPacket);
+                mRxMutex.unlock();
+                emit PacketReceived(mRxQueue.count());
+            }
+            rx_cb_done = false;
             if(libusb_submit_transfer(mRxTransfer) < 0)
             {
                 Disconnect();
             }
         }
         if (mConnected == false) continue;
-        if (tx_done)
+        // Check if tx callback is done
+        if (tx_cb_done)
         {
-            /// @todo Implement
-            //if (have_untransmitted_data)
-                tx_done = false;
-            mTxPacket.data[0] = 1 - mTxPacket.data[0];
-            if(libusb_submit_transfer(mTxTransfer) < 0)
+            // Check if tx callback is successful
+            if (tx_success)
             {
-                Disconnect();
+                // Get the size of the tx queue
+                mTxMutex.lock();
+                bool isTxEmpty = mTxQueue.isEmpty();
+                mTxMutex.unlock();
+                // If there is something to transmit
+                if (!isTxEmpty)
+                {
+                    // Start transmission
+                    tx_success = false;
+                    mTxMutex.lock();
+                    mTxPacket = mTxQueue.dequeue();
+                    mTxMutex.unlock();
+                    tx_cb_done = false;
+                    if(libusb_submit_transfer(mTxTransfer) < 0)
+                    {
+                        Disconnect();
+                    }
+                }
+            }
+            else
+            {
+                // Start transmission again
+                tx_cb_done = false;
+                if(libusb_submit_transfer(mTxTransfer) < 0)
+                {
+                    Disconnect();
+                }
             }
         }
         if (mConnected == false) continue;
 
-        libusb_status = libusb_handle_events(mLibUsbContext);
+        libusb_status = libusb_handle_events_timeout_completed(
+                    mLibUsbContext,
+                    &zero_tv,
+                    NULL
+                    );
         updateConnection(libusb_status);
 
         // Error handling (connection/disconnection and so on)
@@ -243,7 +279,8 @@ WmnDriverUsb::DriverPacket WmnDriverUsb::readPacket(void)
 {
     DriverPacket pkt;
     mRxMutex.lock();
-    pkt = mRxQueue.dequeue();
+    if (!mRxQueue.isEmpty())
+        pkt = mRxQueue.dequeue();
     mRxMutex.unlock();
     return pkt;
 }
