@@ -52,6 +52,7 @@ uint8_t usb_buff_rx[0x40];
 uint8_t usb_buff_tx[0x40];
 
 extern wmn_queue_t rx_queue;
+extern wmn_queue_t tx_queue;
 
 volatile uint8_t usb_tx = 0;
 
@@ -84,21 +85,13 @@ void EP2_OUT_Callback(void)
 {
   //BitAction Led_State;
 
-  // Read received data (2 bytes)
+    // Read received data
     USB_SIL_Read(EP2_OUT, usb_buff_rx);
-//    USB_SIL_Write(EP1_IN, Bulk_Data_Buff, 0x40);
-//  SetEPTxStatus(ENDP1, EP_TX_VALID);
 
-  if (usb_buff_rx[0] == 0)
-  {
-       GPIO_SetBits(LED_PORT,LED1_PIN);
-  }
-  else
-  {
-       GPIO_ResetBits(LED_PORT,LED1_PIN);
-  }
+    // Write to the queue
+    wmn_queue_write(&tx_queue, (WmnPacket *)&usb_buff_rx, 1);
 
-  SetEPRxStatus(ENDP2, EP_RX_VALID);
+    SetEPRxStatus(ENDP2, EP_RX_VALID);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

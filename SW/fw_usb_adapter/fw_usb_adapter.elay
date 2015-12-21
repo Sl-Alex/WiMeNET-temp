@@ -1,57 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <EmBitz_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="..\fw_global\stm_lib\src\stm32f10x_exti.c" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\fw_global\stm_lib\src\stm32f10x_exti.c" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1199" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\fw_global\stm_lib\src\stm32f10x_spi.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\fw_global\stm_lib\src\stm32f10x_spi.c" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="24916" topLine="760" />
+			<Cursor1 position="18051" topLine="548" />
 		</Cursor>
 	</File>
-	<File name="cmsis_boot\stm32f10x.h" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="cmsis_boot\stm32f10x.h" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="5127" topLine="97" />
 		</Cursor>
 	</File>
-	<File name="cmsis_boot\system_stm32f10x.c" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="cmsis_boot\system_stm32f10x.c" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="9810" topLine="263" />
 		</Cursor>
 	</File>
-	<File name="Src\hw_config.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Src\hw_config.c" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="6823" topLine="196" />
 		</Cursor>
 	</File>
-	<File name="Src\main.c" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Src\main.c" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1574" topLine="57" />
+			<Cursor1 position="3428" topLine="111" />
 		</Cursor>
 	</File>
-	<File name="Src\usb_endp.c" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Src\pcd8544.c" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2583" topLine="55" />
+			<Cursor1 position="4775" topLine="80" />
 		</Cursor>
 	</File>
-	<File name="..\wmn\driver\stm32_cc1101\wmn_driver.c" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="Src\usb_endp.c" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="16041" topLine="455" />
+			<Cursor1 position="3170" topLine="69" />
 		</Cursor>
 	</File>
-	<File name="..\wmn\wmn_driver.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="USB-FS\inc\usb_sil.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1131" topLine="0" />
+			<Cursor1 position="1754" topLine="18" />
 		</Cursor>
 	</File>
-	<File name="..\wmn\wmn_queue.c" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="USB-FS\src\usb_init.c" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1891" topLine="45" />
+			<Cursor1 position="2933" topLine="47" />
 		</Cursor>
 	</File>
-	<File name="..\wmn\wmn_queue.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\wmn\driver\stm32_cc1101\wmn_driver.c" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="14545" topLine="463" />
+		</Cursor>
+	</File>
+	<File name="..\wmn\wmn_driver.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="721" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\wmn\wmn_queue.c" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1779" topLine="27" />
+		</Cursor>
+	</File>
+	<File name="..\wmn\wmn_queue.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="827" topLine="3" />
 		</Cursor>

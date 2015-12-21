@@ -24,9 +24,11 @@
 __IO uint8_t PrevXferComplete = 1;
 
 WmnPacket packet;
+WmnPacket tx_packet;
 wmn_queue_t rx_queue;
 wmn_queue_t tx_queue;
 uint8_t rx_cnt = 0;
+extern volatile uint8_t tx_done;
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -91,41 +93,8 @@ int main(void)
 
     if (bDeviceState == CONFIGURED)
     {
-//      if (PrevXferComplete)
-//      {
-        //RHIDCheckState();
-//      }
         #define RECEIVER
         #ifdef RECEIVER
-        /*if (wmn_driver_receive(&packet,10000) != 0)
-        {
-            wmn_queue_write(&rx_queue, &packet, 0);
-            cnt++;
-        }*/
-        //if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) != 0)
-        {
-            //if (wmn_queue_read(&rx_queue, &packet, 0))
-            {
-                /*
-                for (y = 0; y < 8; y++)
-                {
-                    for (x = 0; x < 8; x++)
-                    {
-//                        sprintf(tstr, "%2X", packet.raw[8 * y + x]);
-                        sprintf(tstr, "%2X", Bulk_Data_Buff[8 * y + x]);
-                        lcd8544_putstr(x*(7+3), y*6, tstr, 0, 1);
-                    }
-                }
-                */
-                /*sprintf(tstr,"%2X %2X %2X %2X %2X %2X %2X",packet.raw[ 0],packet.raw[ 1],packet.raw[ 2],packet.raw[ 3],packet.raw[ 4],packet.raw[ 5],packet.raw[ 6]);
-                lcd8544_putstr(0, 0,tstr,0, 1);
-                sprintf(tstr,"%2X %2X %2X %2X %2X %2X %2X",packet.raw[ 7],packet.raw[ 8],packet.raw[ 9],packet.raw[10],packet.raw[11],packet.raw[12],packet.raw[13]);
-                lcd8544_putstr(0, 6,tstr,0, 1);
-                sprintf(tstr,"%2X %2X %2X %2X    %2X %2X",packet.raw[14],packet.raw[15],packet.raw[16],packet.raw[17],packet.raw[18],packet.raw[19]);
-                lcd8544_putstr(0,12,tstr,0, 1);
-                delay_hw_ms(333);*/
-            }
-        }
         if (usb_tx == 0)
         {
             if (wmn_queue_read(&rx_queue, (WmnPacket *)&usb_buff_tx, 0))
@@ -141,6 +110,22 @@ int main(void)
                 usb_tx = 1;
                 USB_SIL_Write(EP1_IN, usb_buff_tx, 0x40);
                 SetEPTxValid(ENDP1);
+            }
+        }
+        if (tx_done)
+        {
+            if (wmn_queue_read(&tx_queue, &tx_packet, 0))
+            {
+                if (tx_packet.raw[0] == 0)
+                {
+                    GPIO_SetBits(GPIOC,GPIO_Pin_13);
+                }
+                else
+                {
+                    GPIO_ResetBits(GPIOC,GPIO_Pin_13);
+                }
+
+                wmn_driver_transmit(&tx_packet);
             }
         }
             //sprintf(tstr,"Q %2u",rx_queue.count);

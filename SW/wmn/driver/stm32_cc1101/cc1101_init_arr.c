@@ -1,7 +1,7 @@
 // CC1101 RF settings array
     0x07,  // IOCFG2              GDO2 Output Pin Configuration
     0x2E,  // IOCFG1              GDO1 Output Pin Configuration
-    0x06,  // IOCFG0              GDO0 Output Pin Configuration
+    0x1B,  // IOCFG0              GDO0 Output Pin Configuration
     0x07,  // FIFOTHR             RX FIFO and TX FIFO Thresholds
     0xA7,  // SYNC1               Sync Word, High Byte
     0x58,  // SYNC0               Sync Word, Low Byte
@@ -22,7 +22,7 @@
     0xF8,  // MDMCFG0             Modem Configuration
     0x47,  // DEVIATN             Modem Deviation Setting
     0x07,  // MCSM2               Main Radio Control State Machine Configuration
-    0x0C,  // MCSM1               Main Radio Control State Machine Configuration
+    0x0F,  // MCSM1               Main Radio Control State Machine Configuration
     0x18,  // MCSM0               Main Radio Control State Machine Configuration
     0x1D,  // FOCCFG              Frequency Offset Compensation Configuration
     0x1C,  // BSCFG               Bit Synchronization Configuration

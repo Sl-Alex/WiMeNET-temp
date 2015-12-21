@@ -23,7 +23,6 @@ public slots:
     void disconnect();
     int send(int num);
     int read(void);
-//    void generateKey();
 
 signals:
     void statusChanged();
@@ -31,8 +30,7 @@ signals:
     void test();
 
 private:
-    libusb_device_handle * dev_handle;
-    int m_status;
+    int mStatus;
     WmnDriverUsb * mDrv;
 private slots:
     void RxDone(int value);

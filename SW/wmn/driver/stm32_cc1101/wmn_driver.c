@@ -146,6 +146,10 @@ static void write(uint8_t address, uint8_t * data, uint8_t length);
 static void driver_irq_setup(void);
 void wmn_driver_irq_enable(void);
 
+volatile uint8_t tx_done = 1;
+volatile uint8_t rx_done = 0;
+volatile uint8_t rx_overflow = 0;
+
 /// @brief Initialize CC1101
 void wmn_driver_init(void)
 {
@@ -318,10 +322,16 @@ static void powerup_reset(void)
 
 void wmn_driver_transmit(WmnPacket * packet)
 {
+    tx_done = 0;
     write(CC1101_REG_RXTX_FIFO, (uint8_t *)packet, WMN_CONFIG_PACKET_LENGTH);
     strobe(CC1101_STROBE_STX);
     /// @todo Implement waiting if necessary
     // Wait for TX finish (check GDO0)
+}
+
+WmnDriverState_t wmn_driver_get_state(void)
+{
+
 }
 
 uint8_t wmn_driver_receive(WmnPacket * packet, uint16_t timeout)
@@ -423,6 +433,9 @@ void wmn_driver_irq_disable()
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
     NVIC_Init(&NVIC_InitStructure);
+
+    NVIC_InitStructure.NVIC_IRQChannel = GDO0_IRQn;
+    NVIC_Init(&NVIC_InitStructure);
 }
 
 void wmn_driver_irq_enable(void)
@@ -434,6 +447,9 @@ void wmn_driver_irq_enable(void)
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
+
+    NVIC_InitStructure.NVIC_IRQChannel = GDO0_IRQn;
+    NVIC_Init(&NVIC_InitStructure);
 }
 
 // GDO2 interrupt
@@ -442,34 +458,36 @@ void GDO2_IRQHandler(void)
 {
     uint8_t rssi_dec;
     int16_t rssi_dBm;
-    uint8_t rssi_offset = 74; // for 100kbit @868MHz
-
-    static uint8_t tmp = 0;
-    tmp = 1 - tmp;
+#define RSSI_OFFSET 74 // for 100kbit @868MHz
 
     if(EXTI_GetITStatus(GDO2_IRQLine) != RESET)
     {
-        /// @TODO Remove debug statement
-        if (tmp == 0)
-        {
-           GPIO_SetBits(GPIOC,GPIO_Pin_13);
-        }
+        static uint8_t tmp = 0;
+        tmp = 1 - tmp;
+        if (tmp)
+            GPIO_SetBits(GPIOC,GPIO_Pin_13);
         else
-        {
-           GPIO_ResetBits(GPIOC,GPIO_Pin_13);
-        }
-        /* Clear the  EXTI line 3 pending bit */
+            GPIO_ResetBits(GPIOC,GPIO_Pin_13);
+        /* Clear the EXTI line pending bit */
         EXTI_ClearITPendingBit(GDO2_IRQLine);
 
+        // Read the packet from the RX FIFO
         read(CC1101_REG_RXTX_FIFO, (uint8_t *)&rx_packet, WMN_CONFIG_PACKET_LENGTH);
         rssi_dec = rssi_raw;
         if (rssi_dec >= 128)
-            rssi_dBm = (int16_t)((int16_t)(rssi_dec - 256) / 2) - rssi_offset;
+            rssi_dBm = (int16_t)((int16_t)(rssi_dec - 256) / 2) - RSSI_OFFSET;
         else
-            rssi_dBm = (rssi_dec / 2) - rssi_offset;
+            rssi_dBm = (rssi_dec / 2) - RSSI_OFFSET;
 //            packet->packet.rssi = rssi_raw + 0x80; // Converting range -128..127 to range 0..255
         rx_packet.packet.rssi = -rssi_dBm; // Converting range -128..127 to range 0..255
         rx_packet.packet.lqi = lqi_raw & 0x7F;   // Remove CRC_OK field
+
+        // Update rx_done
+        if (rx_done)
+        {
+            rx_overflow = 1;
+        }
+        rx_done = 1;
         if (rx_callback != 0)
             rx_callback(&rx_packet);
         // Check chip status for RX overflow
@@ -480,5 +498,17 @@ void GDO2_IRQHandler(void)
             // Switch to RX mode
             strobe(CC1101_STROBE_SRX);
         }
+    }
+}
+
+// GDO0 interrupt
+// Transmit is complete
+void GDO0_IRQHandler(void)
+{
+    if(EXTI_GetITStatus(GDO0_IRQLine) != RESET)
+    {
+        tx_done = 1;
+        /* Clear the EXTI line pending bit */
+        EXTI_ClearITPendingBit(GDO0_IRQLine);
     }
 }
