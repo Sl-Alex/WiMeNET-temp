@@ -20,11 +20,14 @@ Of course, a lot of things should be done. Here they are:
 * Network structure documentation. Will be documented in Dia.
 * HW documentation. What and how to connect to make it work. At the moment the following hardware is used: [dev. board][1], [transceiver][2], [display][3]
 * The network itself. At the moment only a draft driver is available
-* Secure communication. AES-128 is planned, but any custom  Test implementation takes about 1.5ms for the 64-byte packet encryption. Decryption takes roughly the same time.
+* Secure communication. AES-128 is planned, but any custom algorithm can also be used. Test implementation takes about 1.5ms for the 64-byte packet encryption. Decryption takes roughly the same time.
 * Mesh implementation.
+
+In addition to this list please take a look at the [list of the known issues][4]. It is always in the actual state.
 
 *Note: I'm not sure that mesh implementation is necessary here. It seems that the network without mesh is more than enough for the smart home, because the communication on such a small distances is stable enough. Moreover, 868MHz frequency range is clear enough, unlike of 433MHz range*
 
   [1]: http://www.ebay.com/itm/STM32F103C8T6-ARM-STM32-Minimum-System-Development-Board-Module-For-Arduino-NEW-/161469482910
   [2]: http://www.ebay.com/itm/1PCS-CC1101-wireless-module-Long-Distance-Transmission-Antenna-868MHZ-NEW-/262159509635
   [3]: http://www.ebay.com/itm/84-48-LCD-Module-White-backlight-adapter-pcb-for-Nokia-5110-NEW-S3-/252056501566
+  [4]: https://github.com/Sl-Alex/WiMeNET-temp/issues
