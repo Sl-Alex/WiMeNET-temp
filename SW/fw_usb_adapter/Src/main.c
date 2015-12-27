@@ -12,6 +12,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
 #include "hw_config.h"
+#include "systick.h"
 #include "usb_lib.h"
 #include "usb_pwr.h"
 #include "pcd8544.h"
@@ -55,6 +56,7 @@ int main(void)
 {
     uint8_t x, y;
     static char tstr[32];
+    uint32_t tx_start_time;
     GPIO_InitTypeDef GPIO_InitStructure;
 
    Set_System();
@@ -88,6 +90,7 @@ int main(void)
     lcd8544_refresh();
     delay_hw_ms(500);
     lcd8544_clear();
+  systick_init();
   while (1)
   {
 
@@ -95,6 +98,7 @@ int main(void)
     {
         #define RECEIVER
         #ifdef RECEIVER
+        uint8_t drv_state = wmn_driver_work();
         if (usb_tx == 0)
         {
             if (wmn_queue_read(&rx_queue, (WmnPacket *)&usb_buff_tx, 0))
@@ -112,6 +116,8 @@ int main(void)
                 SetEPTxValid(ENDP1);
             }
         }
+        sprintf(tstr, "%2X", drv_state);
+        lcd8544_putstr(7*(7+3), 7*6, tstr, 0, 1);
         if (tx_done)
         {
             if (wmn_queue_read(&tx_queue, &tx_packet, 0))
@@ -124,10 +130,18 @@ int main(void)
                 {
                     GPIO_ResetBits(GPIOC,GPIO_Pin_13);
                 }
-
                 wmn_driver_transmit(&tx_packet);
+                tx_start_time = sys_time;
             }
         }
+        else
+        {
+            if (systick_is_elapsed(tx_start_time,10))
+            {
+                wmn_driver_retransmit();
+            }
+        }
+
             //sprintf(tstr,"Q %2u",rx_queue.count);
             //sprintf(tstr,"Q %2u CNT %3u",0,cnt);
             //lcd8544_putstr(0,33,tstr,0, 0);

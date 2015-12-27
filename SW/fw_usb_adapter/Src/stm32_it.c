@@ -34,6 +34,7 @@
 #include "usb_lib.h"
 #include "usb_pwr.h"
 #include "platform_config.h"
+#include "systick.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -160,6 +161,7 @@ void PendSV_Handler(void)
 *******************************************************************************/
 void SysTick_Handler(void)
 {
+    sys_time++;
 }
 
 /******************************************************************************/

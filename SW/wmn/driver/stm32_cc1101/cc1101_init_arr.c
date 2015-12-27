@@ -22,7 +22,7 @@
     0xF8,  // MDMCFG0             Modem Configuration
     0x47,  // DEVIATN             Modem Deviation Setting
     0x07,  // MCSM2               Main Radio Control State Machine Configuration
-    0x0F,  // MCSM1               Main Radio Control State Machine Configuration
+    0x2F,  // MCSM1               Main Radio Control State Machine Configuration
     0x18,  // MCSM0               Main Radio Control State Machine Configuration
     0x1D,  // FOCCFG              Frequency Offset Compensation Configuration
     0x1C,  // BSCFG               Bit Synchronization Configuration

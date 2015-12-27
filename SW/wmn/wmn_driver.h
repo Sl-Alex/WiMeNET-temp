@@ -27,8 +27,8 @@ void wmn_driver_wake(void);     // Switch driver to the active mode
 void wmn_driver_set_rx_callback(wmn_driver_rx_cb_t cb);	// Set reception callback (new packet has arrived and can be processed)
 void wmn_driver_set_tx_callback(wmn_driver_tx_cb_t cb);	// Set transmission callback (last transmission is done, new packet can be sent)
 void wmn_driver_transmit(WmnPacket * packet);	// Transmit a packet immediately
+void wmn_driver_retransmit(void);
 WmnDriverState_t wmn_driver_get_state(void);
-/// @TODO remove this function
-uint8_t wmn_driver_receive(WmnPacket * packet, uint16_t timeout);
+uint8_t wmn_driver_work(void); // Main function, should be called in the main loop
 
 #endif // WMN_DRIVER_H

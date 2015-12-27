@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <EmBitz_project_file>
-	<EmBitzVersion release="0.40" revision="0" />
+	<EmBitzVersion release="0.42" revision="0" />
 	<FileVersion major="1" minor="0" />
 	<Project>
 		<Option title="fw_usb_adapter" />
@@ -105,6 +105,10 @@
 		<Unit filename="..\fw_global\stm_lib\src\stm32f10x_usart.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\fw_global\systick.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\fw_global\systick.h" />
 		<Unit filename="cmsis\core_cm3.h" />
 		<Unit filename="cmsis\core_cmFunc.h" />
 		<Unit filename="cmsis\core_cmInstr.h" />

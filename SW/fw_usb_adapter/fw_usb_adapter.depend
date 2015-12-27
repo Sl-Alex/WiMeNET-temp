@@ -429,9 +429,10 @@
 	"usb_core.h"
 	"usb_type.h"
 
-1450724727 source:d:\work\svn\wimenet_temp\trunk\sw\fw_usb_adapter\src\main.c
+1451205216 source:d:\work\svn\wimenet_temp\trunk\sw\fw_usb_adapter\src\main.c
 	<stdio.h>
 	"hw_config.h"
+	"systick.h"
 	"usb_lib.h"
 	"usb_pwr.h"
 	"pcd8544.h"
@@ -442,7 +443,7 @@
 
 1447603603 d:\work\svn\wimenet_temp\trunk\sw\fw_usb_adapter\inc\pcd8544.h
 
-1450020587 d:\work\svn\wimenet_temp\trunk\sw\wmn\wmn_driver.h
+1451205196 d:\work\svn\wimenet_temp\trunk\sw\wmn\wmn_driver.h
 	<stdint.h>
 	"WmnPacket.h"
 
@@ -476,12 +477,13 @@
 
 1419800380 d:\work\svn\wimenet_temp\trunk\sw\fw_usb_adapter\inc\font4x6.h
 
-1439641732 source:d:\work\svn\wimenet_temp\trunk\sw\fw_usb_adapter\src\stm32_it.c
+1451175463 source:d:\work\svn\wimenet_temp\trunk\sw\fw_usb_adapter\src\stm32_it.c
 	"stm32_it.h"
 	"usb_istr.h"
 	"usb_lib.h"
 	"usb_pwr.h"
 	"platform_config.h"
+	"systick.h"
 
 1439641732 d:\work\svn\wimenet_temp\trunk\sw\fw_usb_adapter\inc\stm32_it.h
 	"platform_config.h"
@@ -549,7 +551,7 @@
 1449916757 source:d:\work\svn\wimenet_temp\trunk\sw\wmn\wmn_queue.c
 	"wmn_queue.h"
 
-1450724743 source:d:\work\svn\wimenet_temp\trunk\sw\wmn\driver\stm32_cc1101\wmn_driver.c
+1451205185 source:d:\work\svn\wimenet_temp\trunk\sw\wmn\driver\stm32_cc1101\wmn_driver.c
 	"wmn_driver.h"
 	"wmn_config.h"
 	"stm32f10x_spi.h"
@@ -559,5 +561,13 @@
 
 1450210599 d:\work\svn\wimenet_temp\trunk\sw\wmn\driver\stm32_cc1101\cc1101_regs.h
 
-1450724933 d:\work\svn\wimenet_temp\trunk\sw\wmn\driver\stm32_cc1101\cc1101_init_arr.c
+1451173361 d:\work\svn\wimenet_temp\trunk\sw\wmn\driver\stm32_cc1101\cc1101_init_arr.c
+
+1451204840 source:d:\work\svn\wimenet_temp\trunk\sw\fw_global\systick.c
+	"systick.h"
+	"stm32f10x.h"
+	"misc.h"
+
+1451204975 d:\work\svn\wimenet_temp\trunk\sw\fw_global\systick.h
+	"stdint.h"
 

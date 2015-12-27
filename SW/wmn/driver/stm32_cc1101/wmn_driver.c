@@ -18,6 +18,32 @@
     #error Maximum CC1101 packet length exceeded
 #endif
 
+typedef enum {
+    CC1101_ST_SLEEP = 0,
+    CC1101_ST_IDLE,
+    CC1101_ST_XOFF,
+    CC1101_ST_VCOON_MC,
+    CC1101_ST_REGON_MC,
+    CC1101_ST_MANCAL,
+    CC1101_ST_VCOON,
+    CC1101_ST_REGON,
+    CC1101_ST_STARTCAL,
+    CC1101_ST_BWBOOST,
+    CC1101_ST_FS_LOCK,
+    CC1101_ST_IFADCON,
+    CC1101_ST_ENDCAL,
+    CC1101_ST_RX,
+    CC1101_ST_RX_END,
+    CC1101_ST_RX_RST,
+    CC1101_ST_TXRX_SWITCH,
+    CC1101_ST_RXFIFO_OVERFLOW,
+    CC1101_ST_FSTXON,
+    CC1101_ST_TX,
+    CC1101_ST_TX_END,
+    CC1101_ST_RXTX_SWITCH,
+    CC1101_ST_TXFIFO_UNDERFLOW
+} cc1101_state_t;
+
 static uint8_t rssi_raw;
 static uint8_t lqi_raw;
 
@@ -329,40 +355,14 @@ void wmn_driver_transmit(WmnPacket * packet)
     // Wait for TX finish (check GDO0)
 }
 
+void wmn_driver_retransmit(void)
+{
+    strobe(CC1101_STROBE_STX);
+}
+
 WmnDriverState_t wmn_driver_get_state(void)
 {
 
-}
-
-uint8_t wmn_driver_receive(WmnPacket * packet, uint16_t timeout)
-{
-    uint8_t rssi_dec;
-    int16_t rssi_dBm;
-    uint8_t rssi_offset = 74; // for 100kbit @868MHz
-
-    delay_hw_us_clear();
-    strobe(CC1101_STROBE_SRX);
-    while (delay_hw_us_is_elapsed(timeout) == 0)
-    {
-        // If GDO2 is 1 then read data and return 1;
-        /// @todo Rewrite using interrupts
-        /// Interrupt should be configured to the rising edge
-        /// In the interrupt we read the packet as long as the input is high
-        if (GPIO_ReadInputDataBit(CC1101_GPIO_GPIO, CC1101_PIN_GDO2) != 0)
-        {
-            read(CC1101_REG_RXTX_FIFO, (uint8_t *)packet, WMN_CONFIG_PACKET_LENGTH);
-            rssi_dec = rssi_raw;
-            if (rssi_dec >= 128)
-                rssi_dBm = (int16_t)((int16_t)(rssi_dec - 256) / 2) - rssi_offset;
-            else
-                rssi_dBm = (rssi_dec / 2) - rssi_offset;
-//            packet->packet.rssi = rssi_raw + 0x80; // Converting range -128..127 to range 0..255
-            packet->packet.rssi = -rssi_dBm; // Converting range -128..127 to range 0..255
-            packet->packet.lqi = lqi_raw & 0x7F;   // Remove CRC_OK field
-            return 1;
-        }
-    }
-    return 0;
 }
 
 /// @brief Read data from CC1101
@@ -511,4 +511,93 @@ void GDO0_IRQHandler(void)
         /* Clear the EXTI line pending bit */
         EXTI_ClearITPendingBit(GDO0_IRQLine);
     }
+}
+
+cc1101_state_t cc1101_get_state(void)
+{
+    uint8_t reg;
+
+    asm("cpsid i");
+    read(CC1101_REG_MARCSTATE, &reg, 1);
+    asm("cpsie i");
+
+    return reg;
+}
+
+/// @brief Main driver function, switches device status, calls callbacks and so on.
+uint8_t wmn_driver_work(void)
+{
+    cc1101_state_t state = cc1101_get_state();
+    cc1101_state_t state2 = cc1101_get_state();
+
+    if (state != state2)
+        return 0;
+
+    switch (state)
+    {
+        case CC1101_ST_IDLE:
+            // Switch to RX
+            asm("cpsid i");
+            strobe(CC1101_STROBE_SRX);
+            asm("cpsie i");
+            break;
+        case CC1101_ST_VCOON_MC:
+            break;
+        case CC1101_ST_REGON_MC:
+            break;
+        case CC1101_ST_MANCAL:
+            break;
+        case CC1101_ST_VCOON:
+            break;
+        case CC1101_ST_REGON:
+            break;
+        case CC1101_ST_STARTCAL:
+            break;
+        case CC1101_ST_BWBOOST:
+            break;
+        case CC1101_ST_FS_LOCK:
+            break;
+        case CC1101_ST_IFADCON:
+            break;
+        case CC1101_ST_ENDCAL:
+            break;
+        case CC1101_ST_RX:
+            // Nothing to do
+            break;
+        case CC1101_ST_RX_END:
+            // Nothing to do
+            break;
+        case CC1101_ST_RX_RST:
+            // Nothing to do
+            break;
+        case CC1101_ST_TXRX_SWITCH:
+            break;
+        case CC1101_ST_RXFIFO_OVERFLOW:
+/*            asm("cpsid i");
+            // Flush RX buffer
+            strobe(CC1101_STROBE_SFRX);
+            asm("cpsie i");
+            asm("cpsid i");
+            // Switch to RX mode
+            strobe(CC1101_STROBE_SRX);
+            asm("cpsie i");
+*/
+            break;
+        case CC1101_ST_TX:
+            break;
+        case CC1101_ST_TX_END:
+            break;
+        case CC1101_ST_RXTX_SWITCH:
+            break;
+        case CC1101_ST_TXFIFO_UNDERFLOW:
+            break;
+        // The rest seems to be a HW error
+        case CC1101_ST_SLEEP:
+        case CC1101_ST_XOFF:
+        case CC1101_ST_FSTXON:
+        default:
+            break;
+    }
+
+    return (uint8_t) state;
 }
